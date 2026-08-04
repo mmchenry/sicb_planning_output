@@ -9,6 +9,7 @@ by hand except `index.html`; the rest is generated from the meeting data by the 
 ```
 index.html        the hub page, hand-maintained
 schedule/         the room-by-time schedule grid, generated
+posters/          the poster sessions as proportional bars, generated
 3rd_floor.png     convention centre third floor, the 300-series breakout rooms
 floor_plans.pdf   every level of the convention centre, 9 pages
 .nojekyll         serve the files as-is, no Jekyll processing
@@ -18,7 +19,7 @@ The audience is the Programming Committee, the Divisional Program Officers inclu
 are linked from the hub page so a DPO can check the room layout while deciding where their division's
 sessions should sit.
 
-The schedule grid currently renders the 2026 meeting, which is a worked example for developing the
+The schedule and poster pages currently render the 2026 meeting, which is a worked example for developing the
 interface rather than material for the committee. Point `MEETING_YEAR` at 2027 and republish before
 the site is circulated.
 
@@ -30,11 +31,12 @@ a static host, from the filesystem, or as an email attachment.
 From the `sicb_po` repository, in `main_schedule.ipynb`:
 
 ```python
-from schedule_build import build_from_xcd, load_paths, publish_page
+from schedule_build import build_from_xcd, load_paths, publish_page, publish_posters
 
 paths = load_paths()
 build = build_from_xcd(paths, "program_sessions_085634.csv", "program_presentation_summary (12).csv")
 publish_page(build, "~/code/sicb_planning_output", page="schedule", title="SICB 2026 schedule")
+publish_posters(build, "~/code/sicb_planning_output", page="posters", title="SICB 2026 poster sessions")
 ```
 
 ## Page contents
