@@ -9,8 +9,18 @@ by hand except `index.html`; the rest is generated from the meeting data by the 
 ```
 index.html        the hub page, hand-maintained
 schedule/         the room-by-time schedule grid, generated
+3rd_floor.png     convention centre third floor, the 300-series breakout rooms
+floor_plans.pdf   every level of the convention centre, 9 pages
 .nojekyll         serve the files as-is, no Jekyll processing
 ```
+
+The audience is the Programming Committee, the Divisional Program Officers included. The venue files
+are linked from the hub page so a DPO can check the room layout while deciding where their division's
+sessions should sit.
+
+The schedule grid currently renders the 2026 meeting, which is a worked example for developing the
+interface rather than material for the committee. Point `MEETING_YEAR` at 2027 and republish before
+the site is circulated.
 
 Each generated page is a single self-contained HTML file with no external requests, so it works from
 a static host, from the filesystem, or as an email attachment.
