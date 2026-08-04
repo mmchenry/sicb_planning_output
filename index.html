@@ -42,6 +42,11 @@ color:var(--muted)}
 cursor:pointer;user-select:none}
 .years input{margin:0;cursor:pointer}
 .years .note{font-size:12px;color:var(--muted);font-weight:400;flex:1 1 100%;margin:0}
+/* Marks a section that belongs to one cycle regardless of the year selected above. The floor plans
+   are the 2027 venue's, and a 2026 page names rooms in a different building entirely. */
+.onlyyear{font-size:10px;font-weight:700;letter-spacing:.06em;color:#a86000;background:#fdf6ec;
+border:1px solid #f0e0c8;border-radius:3px;padding:1px 5px;margin-left:8px;vertical-align:1px;
+text-transform:none}
 /* A card for a page this year does not have yet. Left in place rather than hidden, so the set of
    pages reads the same for every year and it is obvious what is still to be built. */
 .card.absent{opacity:.5;pointer-events:none;background:var(--panel);border-style:dashed}
@@ -85,6 +90,23 @@ cursor:pointer;user-select:none}
       <span>One column per room</span>
       <span>Conflict checks at the foot of the page</span>
       <span>Prints one day per page</span>
+    </div>
+  </a>
+
+  <a class="card" data-page="talks">
+    <h3>Contributed talk sessions</h3>
+    <p>
+      The sessions as the divisions have drafted them, in their own numbered order, from the session
+      planner rather than from the programmed schedule. So this page works from the moment abstracts
+      start being assigned, months before there is a grid to draw. Nothing here is placed: a drafted
+      session has no room, day, or time. Each card carries the keywords its abstracts share, since a
+      drafted session has no title yet. Filter by division, click a session to list its talks, or
+      switch to similarity mode to find two sessions that cover the same ground.
+    </p>
+    <div class="meta">
+      <span class="missing">Not built for this year yet</span>
+      <span>Numbered order, by division</span>
+      <span>Compare any two sessions side by side</span>
     </div>
   </a>
 
@@ -134,12 +156,15 @@ cursor:pointer;user-select:none}
   </a>
 </div>
 
-<h2>The venue</h2>
+<h2>The venue <span class="onlyyear">2027 only</span></h2>
 
 <p>
-  SICB 2027 is at the David L. Lawrence Convention Center in Pittsburgh, 3 to 7 January. All meeting
-  space is in that one building; the Westin is the room block only. Use these when you are deciding
-  which rooms your division's sessions should go in.
+  These are the <b>2027</b> floor plans, whichever year is selected above. SICB 2027 is at the David
+  L. Lawrence Convention Center in Pittsburgh, 3 to 7 January: all meeting space is in that one
+  building, and the Westin is the room block only. Use them when you are deciding which rooms your
+  division's sessions should go in. Earlier cycles were at other venues, 2026 at the Oregon
+  Convention Center and the Hyatt Regency in Portland, so the room names on a 2026 page will not
+  appear on these plans.
 </p>
 
 <div class="cards">
