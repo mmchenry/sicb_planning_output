@@ -243,9 +243,14 @@ text-transform:none}
       }
     });
     var built = (PAGES[year] || []).length;
-    document.getElementById('yearnote').textContent =
-      'SICB ' + year + ': ' + built + ' of ' + cards.length + ' pages built.' +
-      (built < cards.length ? ' The rest appear here once they are published.' : '');
+    var note = 'SICB ' + year + ': ';
+    if (!built) {
+      note += 'nothing published yet. Each page appears here as it is built.';
+    } else {
+      note += built + ' of ' + cards.length + ' pages built.' +
+        (built < cards.length ? ' The rest appear here once they are published.' : '');
+    }
+    document.getElementById('yearnote').textContent = note;
     try { window.localStorage.setItem('sicb-year', year); } catch (e) { /* private browsing */ }
   }
 
