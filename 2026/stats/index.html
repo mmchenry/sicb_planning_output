@@ -1,0 +1,861 @@
+<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'><title>SICB 2026 program statistics</title><style>
+:root{--ink:#1c1c1c;--muted:#666;--line:#e2e2e6;--panel:#f6f7f9;--bg:#fff;--lab:52px;--hlab:56px}
+*{box-sizing:border-box}
+body{margin:0;padding:20px 24px 64px;font:13px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",
+sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:1000px;margin:0 auto}
+h1{font-size:20px;margin:0 0 2px}
+.sub{color:var(--muted);margin:0 0 18px;font-size:12px}
+h2{font-size:15px;margin:30px 0 4px;padding-bottom:4px;border-bottom:2px solid var(--ink)}
+.note{margin:0 0 12px;font-size:11.5px;color:var(--muted)}
+.none{margin:0 0 12px;font-size:12px;color:#888;font-style:italic}
+code{background:var(--panel);padding:1px 5px;border-radius:3px;font-size:11.5px}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px 26px}
+.stack{display:grid;gap:16px}
+.chart{min-width:0}
+.ch{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#555;
+margin-bottom:6px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px}
+.cn{font-weight:400;text-transform:none;letter-spacing:0;font-size:10.5px;color:#888}
+.bars{display:flex;flex-direction:column;gap:3px}
+.brow{display:grid;grid-template-columns:var(--lab) 1fr auto;gap:8px;align-items:center}
+.blab{font-size:10.5px;font-weight:600;color:#444;font-variant-numeric:tabular-nums}
+.track{position:relative;height:17px;display:flex;align-items:center}
+.bar{height:100%;border-radius:3px;display:flex;align-items:center;justify-content:flex-end;
+padding-right:5px;min-width:20px}
+.cnt{color:#fff;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums}
+.zero{font-size:10px;color:#aaa;font-weight:600}
+.btrail{font-size:10px;color:#8a8a8a;font-variant-numeric:tabular-nums;min-width:46px;
+text-align:right}
+/* Column charts. The plot is a flex row of equal columns, so the tick row beneath lines up with the
+   columns without any per-column positioning. */
+.plot{position:relative;border-bottom:1px solid #c9ccd1;background:
+linear-gradient(to top,#fafbfc,#fff)}
+.cols{position:absolute;inset:0;display:flex;align-items:flex-end;gap:1px}
+.col{flex:1 1 0;min-width:0;height:100%;display:flex;align-items:flex-end}
+.colfill{width:100%;border-radius:1px 1px 0 0;min-height:1px}
+.ref{position:absolute;left:0;right:0;border-top:1px dashed #b03a3a;pointer-events:none}
+/* The label sits below its line, not above it: the line can be near the top of the plot and a label
+   above it would be clipped. */
+.ref span{position:absolute;right:0;top:1px;font-size:9px;color:#b03a3a;font-weight:600;
+background:rgba(255,255,255,.82);padding:0 2px;border-radius:2px}
+.ticks{display:flex;gap:1px;margin-top:2px}
+.tick{flex:1 1 0;min-width:0;font-size:8.5px;color:#999;text-align:center;
+font-variant-numeric:tabular-nums;overflow:hidden}
+/* The matrix. Column headings are rotated because a five-letter abbreviation does not fit a cell. */
+.mkey{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.mn{font-size:10px;color:#666;font-variant-numeric:tabular-nums;font-weight:600}
+.ramp{display:inline-flex;height:10px;width:130px;border-radius:2px;overflow:hidden}
+.ramp span{flex:1}
+.heat{display:grid;gap:2px;max-width:760px}
+.hcorner{display:flex;align-items:flex-end;justify-content:flex-end;padding-right:4px}
+.hcorner span{font-size:9px;color:#aaa}
+.hhead{height:46px;writing-mode:vertical-rl;transform:rotate(180deg);font-size:9.5px;
+font-weight:700;color:#555;display:flex;align-items:flex-start;justify-content:center;
+letter-spacing:.02em}
+.hside{font-size:9.5px;font-weight:700;color:#555;display:flex;align-items:center;
+justify-content:flex-end;padding-right:5px}
+.hcell{aspect-ratio:1;border-radius:2px;display:flex;align-items:center;justify-content:center;
+font-size:9px;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.hcell.dark{color:#1c1c1c}
+.hcell.empty{background:#f0f0f2}
+/* The diagonal carries no value and no ramp colour: it is a different quantity, listed separately.
+   A faint hatch marks it as deliberately blank rather than as a missing cell. */
+.hself{aspect-ratio:1;border-radius:2px;background:repeating-linear-gradient(45deg,#f2f3f5 0 3px,
+#e8e9ec 3px 6px)}
+.lists{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px 28px;
+margin-top:18px;max-width:760px}
+.toppairs ol{margin:0;padding:0;list-style:none;display:grid;gap:2px}
+.toppairs li{display:flex;align-items:baseline;gap:6px;font-size:11.5px;padding:2px 0;
+border-bottom:1px solid #f0f0f2}
+.toppairs .ln{color:#888;font-size:10.5px}
+.toppairs .tv{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700;color:#444}
+.mh{font-size:10px;color:#8a8a8a}
+.panel{background:var(--panel);border-radius:6px;padding:8px 10px;margin-bottom:12px}
+.ph{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#555;
+margin-bottom:5px}
+.filters{display:flex;flex-wrap:wrap;gap:4px 18px}
+.lg{display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer;user-select:none}
+.mode input[type=radio]{margin:0}
+.matrix[hidden]{display:none}
+footer{margin-top:36px;padding-top:12px;border-top:1px solid var(--line);font-size:11px;
+color:var(--muted)}
+@media (max-width:720px){.pair{grid-template-columns:1fr}}
+@media print{
+ body{padding:0;font-size:9px}
+ .panel{display:none}
+ .matrix[hidden]{display:block}
+ h2{page-break-after:avoid}
+ .stack,.pair{page-break-inside:avoid}
+}
+
+.home{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;
+text-decoration:none;color:#5a5f66;margin-bottom:10px;padding:3px 8px 3px 6px;border-radius:5px;
+border:1px solid var(--line);background:var(--panel)}
+.home:hover{color:#2b4c7e;border-color:#2b4c7e}
+.home svg{display:block;flex:none}
+@media print{.home{display:none}}
+</style></head><body><div class="wrap"><a class="home" href="../../index.html" title="Back to the planning hub"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M2 7.1 8 2.2l6 4.9v6.7H2V7.1Z"/><path d="M6.3 13.8V9.5h3.4v4.3"/></svg><span>Planning hub</span></a><h1>SICB 2026 program statistics</h1><p class="sub">1272 contributed abstracts · 732 talks · 540 posters · 13 divisions · 61 unscheduled · peak 22 of 34 rooms</p><h2>Contributed presentations by division</h2><p class="note">Submitted abstracts and the type each was submitted as, so a withdrawn abstract still counts here. Both panels share one scale. The trailing figure is the division's own split between the two types.</p><div class="pair"><div class="chart"><div class="ch">Talks</div><div class="bars"><div class="brow" title="Ecology &amp; Evolution
+177 talks of 283 submissions"><div class="blab">DEE</div><div class="track"><div class="bar" style="width:100.00%;background:#2f7d4f"><span class="cnt">177</span></div></div><div class="btrail">63%</div></div><div class="brow" title="Comparative Biomechanics
+124 talks of 193 submissions"><div class="blab">DCB</div><div class="track"><div class="bar" style="width:70.06%;background:#2b4c7e"><span class="cnt">124</span></div></div><div class="btrail">64%</div></div><div class="brow" title="Vertebrate Morphology
+84 talks of 150 submissions"><div class="blab">DVM</div><div class="track"><div class="bar" style="width:47.46%;background:#c1651c"><span class="cnt">84</span></div></div><div class="btrail">56%</div></div><div class="brow" title="Animal Behavior
+77 talks of 144 submissions"><div class="blab">DAB</div><div class="track"><div class="bar" style="width:43.50%;background:#9c2f2f"><span class="cnt">77</span></div></div><div class="btrail">53%</div></div><div class="brow" title="Comparative Physiology &amp; Biochemistry
+59 talks of 126 submissions"><div class="blab">DCPB</div><div class="track"><div class="bar" style="width:33.33%;background:#1f6f6f"><span class="cnt">59</span></div></div><div class="btrail">47%</div></div><div class="brow" title="Neurobiology, Neuroethology, and Sensory Biology
+51 talks of 93 submissions"><div class="blab">DNNSB</div><div class="track"><div class="bar" style="width:28.81%;background:#b03a6a"><span class="cnt">51</span></div></div><div class="btrail">55%</div></div><div class="brow" title="Invertebrate Zoology
+33 talks of 76 submissions"><div class="blab">DIZ</div><div class="track"><div class="bar" style="width:18.64%;background:#1f6fa8"><span class="cnt">33</span></div></div><div class="btrail">43%</div></div><div class="brow" title="Ecoimmunology and Disease Ecology
+35 talks of 50 submissions"><div class="blab">DEDE</div><div class="track"><div class="bar" style="width:19.77%;background:#8a6d1f"><span class="cnt">35</span></div></div><div class="btrail">70%</div></div><div class="brow" title="Phylogenetics and Comparative Biology
+28 talks of 40 submissions"><div class="blab">DPCB</div><div class="track"><div class="bar" style="width:15.82%;background:#4c5b9e"><span class="cnt">28</span></div></div><div class="btrail">70%</div></div><div class="brow" title="Comparative Endocrinology
+18 talks of 39 submissions"><div class="blab">DCE</div><div class="track"><div class="bar" style="width:10.17%;background:#7b2d5e"><span class="cnt">18</span></div></div><div class="btrail">46%</div></div><div class="brow" title="Evolutionary Developmental Biology
+23 talks of 36 submissions"><div class="blab">DEDB</div><div class="track"><div class="bar" style="width:12.99%;background:#6a4c93"><span class="cnt">23</span></div></div><div class="btrail">64%</div></div><div class="brow" title="Outreach, Education, and Policy
+14 talks of 26 submissions"><div class="blab">EDU</div><div class="track"><div class="bar" style="width:7.91%;background:#6b4f2a"><span class="cnt">14</span></div></div><div class="btrail">54%</div></div><div class="brow" title="Botany
+9 talks of 16 submissions"><div class="blab">DOB</div><div class="track"><div class="bar" style="width:5.08%;background:#7a9a2b"><span class="cnt">9</span></div></div><div class="btrail">56%</div></div></div></div><div class="chart"><div class="ch">Posters</div><div class="bars"><div class="brow" title="Ecology &amp; Evolution
+106 posters of 283 submissions"><div class="blab">DEE</div><div class="track"><div class="bar" style="width:59.89%;background:#2f7d4f"><span class="cnt">106</span></div></div><div class="btrail">37%</div></div><div class="brow" title="Comparative Biomechanics
+69 posters of 193 submissions"><div class="blab">DCB</div><div class="track"><div class="bar" style="width:38.98%;background:#2b4c7e"><span class="cnt">69</span></div></div><div class="btrail">36%</div></div><div class="brow" title="Vertebrate Morphology
+66 posters of 150 submissions"><div class="blab">DVM</div><div class="track"><div class="bar" style="width:37.29%;background:#c1651c"><span class="cnt">66</span></div></div><div class="btrail">44%</div></div><div class="brow" title="Animal Behavior
+67 posters of 144 submissions"><div class="blab">DAB</div><div class="track"><div class="bar" style="width:37.85%;background:#9c2f2f"><span class="cnt">67</span></div></div><div class="btrail">47%</div></div><div class="brow" title="Comparative Physiology &amp; Biochemistry
+67 posters of 126 submissions"><div class="blab">DCPB</div><div class="track"><div class="bar" style="width:37.85%;background:#1f6f6f"><span class="cnt">67</span></div></div><div class="btrail">53%</div></div><div class="brow" title="Neurobiology, Neuroethology, and Sensory Biology
+42 posters of 93 submissions"><div class="blab">DNNSB</div><div class="track"><div class="bar" style="width:23.73%;background:#b03a6a"><span class="cnt">42</span></div></div><div class="btrail">45%</div></div><div class="brow" title="Invertebrate Zoology
+43 posters of 76 submissions"><div class="blab">DIZ</div><div class="track"><div class="bar" style="width:24.29%;background:#1f6fa8"><span class="cnt">43</span></div></div><div class="btrail">57%</div></div><div class="brow" title="Ecoimmunology and Disease Ecology
+15 posters of 50 submissions"><div class="blab">DEDE</div><div class="track"><div class="bar" style="width:8.47%;background:#8a6d1f"><span class="cnt">15</span></div></div><div class="btrail">30%</div></div><div class="brow" title="Phylogenetics and Comparative Biology
+12 posters of 40 submissions"><div class="blab">DPCB</div><div class="track"><div class="bar" style="width:6.78%;background:#4c5b9e"><span class="cnt">12</span></div></div><div class="btrail">30%</div></div><div class="brow" title="Comparative Endocrinology
+21 posters of 39 submissions"><div class="blab">DCE</div><div class="track"><div class="bar" style="width:11.86%;background:#7b2d5e"><span class="cnt">21</span></div></div><div class="btrail">54%</div></div><div class="brow" title="Evolutionary Developmental Biology
+13 posters of 36 submissions"><div class="blab">DEDB</div><div class="track"><div class="bar" style="width:7.34%;background:#6a4c93"><span class="cnt">13</span></div></div><div class="btrail">36%</div></div><div class="brow" title="Outreach, Education, and Policy
+12 posters of 26 submissions"><div class="blab">EDU</div><div class="track"><div class="bar" style="width:6.78%;background:#6b4f2a"><span class="cnt">12</span></div></div><div class="btrail">46%</div></div><div class="brow" title="Botany
+7 posters of 16 submissions"><div class="blab">DOB</div><div class="track"><div class="bar" style="width:5.00%;background:#7a9a2b"><span class="cnt">7</span></div></div><div class="btrail">44%</div></div></div></div></div><h2>Contributed sessions by division</h2><p class="note">Sessions in the program, with the mean presentations per session beside each bar. Two divisions with the same number of sessions can be packing them very differently, and that is what decides whether a division needs another room. 2 further contributed sessions are missing from these bars because their division did not resolve from the session list; they render grey on the schedule grid too.</p><div class="pair"><div class="chart"><div class="ch">Talk sessions</div><div class="bars"><div class="brow" title="Ecology &amp; Evolution
+33 talk sessions, 177 talks submitted"><div class="blab">DEE</div><div class="track"><div class="bar" style="width:100.00%;background:#2f7d4f"><span class="cnt">33</span></div></div><div class="btrail">5.4 each</div></div><div class="brow" title="Comparative Biomechanics
+23 talk sessions, 124 talks submitted"><div class="blab">DCB</div><div class="track"><div class="bar" style="width:69.70%;background:#2b4c7e"><span class="cnt">23</span></div></div><div class="btrail">5.4 each</div></div><div class="brow" title="Vertebrate Morphology
+14 talk sessions, 84 talks submitted"><div class="blab">DVM</div><div class="track"><div class="bar" style="width:42.42%;background:#c1651c"><span class="cnt">14</span></div></div><div class="btrail">6.0 each</div></div><div class="brow" title="Animal Behavior
+17 talk sessions, 77 talks submitted"><div class="blab">DAB</div><div class="track"><div class="bar" style="width:51.52%;background:#9c2f2f"><span class="cnt">17</span></div></div><div class="btrail">4.5 each</div></div><div class="brow" title="Comparative Physiology &amp; Biochemistry
+10 talk sessions, 59 talks submitted"><div class="blab">DCPB</div><div class="track"><div class="bar" style="width:30.30%;background:#1f6f6f"><span class="cnt">10</span></div></div><div class="btrail">5.9 each</div></div><div class="brow" title="Neurobiology, Neuroethology, and Sensory Biology
+10 talk sessions, 51 talks submitted"><div class="blab">DNNSB</div><div class="track"><div class="bar" style="width:30.30%;background:#b03a6a"><span class="cnt">10</span></div></div><div class="btrail">5.1 each</div></div><div class="brow" title="Invertebrate Zoology
+9 talk sessions, 33 talks submitted"><div class="blab">DIZ</div><div class="track"><div class="bar" style="width:27.27%;background:#1f6fa8"><span class="cnt">9</span></div></div><div class="btrail">3.7 each</div></div><div class="brow" title="Ecoimmunology and Disease Ecology
+5 talk sessions, 35 talks submitted"><div class="blab">DEDE</div><div class="track"><div class="bar" style="width:15.15%;background:#8a6d1f"><span class="cnt">5</span></div></div><div class="btrail">7.0 each</div></div><div class="brow" title="Phylogenetics and Comparative Biology
+6 talk sessions, 28 talks submitted"><div class="blab">DPCB</div><div class="track"><div class="bar" style="width:18.18%;background:#4c5b9e"><span class="cnt">6</span></div></div><div class="btrail">4.7 each</div></div><div class="brow" title="Comparative Endocrinology
+6 talk sessions, 18 talks submitted"><div class="blab">DCE</div><div class="track"><div class="bar" style="width:18.18%;background:#7b2d5e"><span class="cnt">6</span></div></div><div class="btrail">3.0 each</div></div><div class="brow" title="Evolutionary Developmental Biology
+6 talk sessions, 23 talks submitted"><div class="blab">DEDB</div><div class="track"><div class="bar" style="width:18.18%;background:#6a4c93"><span class="cnt">6</span></div></div><div class="btrail">3.8 each</div></div><div class="brow" title="Outreach, Education, and Policy
+3 talk sessions, 14 talks submitted"><div class="blab">EDU</div><div class="track"><div class="bar" style="width:9.09%;background:#6b4f2a"><span class="cnt">3</span></div></div><div class="btrail">4.7 each</div></div><div class="brow" title="Botany
+0 talk sessions, 9 talks submitted"><div class="blab">DOB</div><div class="track"><span class="zero">0</span></div><div class="btrail"></div></div></div></div><div class="chart"><div class="ch">Poster sessions</div><div class="bars"><div class="brow" title="Ecology &amp; Evolution
+15 poster sessions, 106 posters submitted"><div class="blab">DEE</div><div class="track"><div class="bar" style="width:45.45%;background:#2f7d4f"><span class="cnt">15</span></div></div><div class="btrail">7.1 each</div></div><div class="brow" title="Comparative Biomechanics
+12 poster sessions, 69 posters submitted"><div class="blab">DCB</div><div class="track"><div class="bar" style="width:36.36%;background:#2b4c7e"><span class="cnt">12</span></div></div><div class="btrail">5.8 each</div></div><div class="brow" title="Vertebrate Morphology
+8 poster sessions, 66 posters submitted"><div class="blab">DVM</div><div class="track"><div class="bar" style="width:24.24%;background:#c1651c"><span class="cnt">8</span></div></div><div class="btrail">8.2 each</div></div><div class="brow" title="Animal Behavior
+12 poster sessions, 67 posters submitted"><div class="blab">DAB</div><div class="track"><div class="bar" style="width:36.36%;background:#9c2f2f"><span class="cnt">12</span></div></div><div class="btrail">5.6 each</div></div><div class="brow" title="Comparative Physiology &amp; Biochemistry
+8 poster sessions, 67 posters submitted"><div class="blab">DCPB</div><div class="track"><div class="bar" style="width:24.24%;background:#1f6f6f"><span class="cnt">8</span></div></div><div class="btrail">8.4 each</div></div><div class="brow" title="Neurobiology, Neuroethology, and Sensory Biology
+6 poster sessions, 42 posters submitted"><div class="blab">DNNSB</div><div class="track"><div class="bar" style="width:18.18%;background:#b03a6a"><span class="cnt">6</span></div></div><div class="btrail">7.0 each</div></div><div class="brow" title="Invertebrate Zoology
+6 poster sessions, 43 posters submitted"><div class="blab">DIZ</div><div class="track"><div class="bar" style="width:18.18%;background:#1f6fa8"><span class="cnt">6</span></div></div><div class="btrail">7.2 each</div></div><div class="brow" title="Ecoimmunology and Disease Ecology
+2 poster sessions, 15 posters submitted"><div class="blab">DEDE</div><div class="track"><div class="bar" style="width:6.06%;background:#8a6d1f"><span class="cnt">2</span></div></div><div class="btrail">7.5 each</div></div><div class="brow" title="Phylogenetics and Comparative Biology
+2 poster sessions, 12 posters submitted"><div class="blab">DPCB</div><div class="track"><div class="bar" style="width:6.06%;background:#4c5b9e"><span class="cnt">2</span></div></div><div class="btrail">6.0 each</div></div><div class="brow" title="Comparative Endocrinology
+5 poster sessions, 21 posters submitted"><div class="blab">DCE</div><div class="track"><div class="bar" style="width:15.15%;background:#7b2d5e"><span class="cnt">5</span></div></div><div class="btrail">4.2 each</div></div><div class="brow" title="Evolutionary Developmental Biology
+3 poster sessions, 13 posters submitted"><div class="blab">DEDB</div><div class="track"><div class="bar" style="width:9.09%;background:#6a4c93"><span class="cnt">3</span></div></div><div class="btrail">4.3 each</div></div><div class="brow" title="Outreach, Education, and Policy
+2 poster sessions, 12 posters submitted"><div class="blab">EDU</div><div class="track"><div class="bar" style="width:6.06%;background:#6b4f2a"><span class="cnt">2</span></div></div><div class="btrail">6.0 each</div></div><div class="brow" title="Botany
+0 poster sessions, 7 posters submitted"><div class="blab">DOB</div><div class="track"><span class="zero">0</span></div><div class="btrail"></div></div></div></div></div><h2>Not yet scheduled</h2><p class="note">61 submitted abstracts have no place in the program: 61 in no session at all. Withdrawals land here too, so this is a list to work through rather than a count of mistakes. Only the divisions with at least one are shown.</p><div class="pair"><div class="chart"><div class="ch">Talks</div><div class="bars"><div class="brow" title="Ecology &amp; Evolution
+16 of 177 submitted talks are not in the program"><div class="blab">DEE</div><div class="track"><div class="bar" style="width:100.00%;background:#2f7d4f"><span class="cnt">16</span></div></div><div class="btrail">of 177</div></div><div class="brow" title="Comparative Physiology &amp; Biochemistry
+4 of 59 submitted talks are not in the program"><div class="blab">DCPB</div><div class="track"><div class="bar" style="width:25.00%;background:#1f6f6f"><span class="cnt">4</span></div></div><div class="btrail">of 59</div></div><div class="brow" title="Animal Behavior
+4 of 77 submitted talks are not in the program"><div class="blab">DAB</div><div class="track"><div class="bar" style="width:25.00%;background:#9c2f2f"><span class="cnt">4</span></div></div><div class="btrail">of 77</div></div><div class="brow" title="Neurobiology, Neuroethology, and Sensory Biology
+4 of 51 submitted talks are not in the program"><div class="blab">DNNSB</div><div class="track"><div class="bar" style="width:25.00%;background:#b03a6a"><span class="cnt">4</span></div></div><div class="btrail">of 51</div></div><div class="brow" title="Vertebrate Morphology
+3 of 84 submitted talks are not in the program"><div class="blab">DVM</div><div class="track"><div class="bar" style="width:18.75%;background:#c1651c"><span class="cnt">3</span></div></div><div class="btrail">of 84</div></div><div class="brow" title="Comparative Biomechanics
+1 of 124 submitted talks are not in the program"><div class="blab">DCB</div><div class="track"><div class="bar" style="width:6.25%;background:#2b4c7e"><span class="cnt">1</span></div></div><div class="btrail">of 124</div></div><div class="brow" title="Phylogenetics and Comparative Biology
+2 of 28 submitted talks are not in the program"><div class="blab">DPCB</div><div class="track"><div class="bar" style="width:12.50%;background:#4c5b9e"><span class="cnt">2</span></div></div><div class="btrail">of 28</div></div><div class="brow" title="Evolutionary Developmental Biology
+3 of 23 submitted talks are not in the program"><div class="blab">DEDB</div><div class="track"><div class="bar" style="width:18.75%;background:#6a4c93"><span class="cnt">3</span></div></div><div class="btrail">of 23</div></div><div class="brow" title="Botany
+1 of 9 submitted talks are not in the program"><div class="blab">DOB</div><div class="track"><div class="bar" style="width:6.25%;background:#7a9a2b"><span class="cnt">1</span></div></div><div class="btrail">of 9</div></div><div class="brow" title="Comparative Endocrinology
+1 of 18 submitted talks are not in the program"><div class="blab">DCE</div><div class="track"><div class="bar" style="width:6.25%;background:#7b2d5e"><span class="cnt">1</span></div></div><div class="btrail">of 18</div></div><div class="brow" title="Ecoimmunology and Disease Ecology
+1 of 35 submitted talks are not in the program"><div class="blab">DEDE</div><div class="track"><div class="bar" style="width:6.25%;background:#8a6d1f"><span class="cnt">1</span></div></div><div class="btrail">of 35</div></div><div class="brow" title="Invertebrate Zoology
+1 of 33 submitted talks are not in the program"><div class="blab">DIZ</div><div class="track"><div class="bar" style="width:6.25%;background:#1f6fa8"><span class="cnt">1</span></div></div><div class="btrail">of 33</div></div><div class="brow" title="Outreach, Education, and Policy
+1 of 14 submitted talks are not in the program"><div class="blab">EDU</div><div class="track"><div class="bar" style="width:6.25%;background:#6b4f2a"><span class="cnt">1</span></div></div><div class="btrail">of 14</div></div></div></div><div class="chart"><div class="ch">Posters</div><div class="bars"><div class="brow" title="Ecology &amp; Evolution
+4 of 106 submitted posters are not in the program"><div class="blab">DEE</div><div class="track"><div class="bar" style="width:25.00%;background:#2f7d4f"><span class="cnt">4</span></div></div><div class="btrail">of 106</div></div><div class="brow" title="Comparative Physiology &amp; Biochemistry
+3 of 67 submitted posters are not in the program"><div class="blab">DCPB</div><div class="track"><div class="bar" style="width:18.75%;background:#1f6f6f"><span class="cnt">3</span></div></div><div class="btrail">of 67</div></div><div class="brow" title="Animal Behavior
+2 of 67 submitted posters are not in the program"><div class="blab">DAB</div><div class="track"><div class="bar" style="width:12.50%;background:#9c2f2f"><span class="cnt">2</span></div></div><div class="btrail">of 67</div></div><div class="brow" title="Neurobiology, Neuroethology, and Sensory Biology
+2 of 42 submitted posters are not in the program"><div class="blab">DNNSB</div><div class="track"><div class="bar" style="width:12.50%;background:#b03a6a"><span class="cnt">2</span></div></div><div class="btrail">of 42</div></div><div class="brow" title="Vertebrate Morphology
+2 of 66 submitted posters are not in the program"><div class="blab">DVM</div><div class="track"><div class="bar" style="width:12.50%;background:#c1651c"><span class="cnt">2</span></div></div><div class="btrail">of 66</div></div><div class="brow" title="Comparative Biomechanics
+3 of 69 submitted posters are not in the program"><div class="blab">DCB</div><div class="track"><div class="bar" style="width:18.75%;background:#2b4c7e"><span class="cnt">3</span></div></div><div class="btrail">of 69</div></div><div class="brow" title="Phylogenetics and Comparative Biology
+2 of 12 submitted posters are not in the program"><div class="blab">DPCB</div><div class="track"><div class="bar" style="width:12.50%;background:#4c5b9e"><span class="cnt">2</span></div></div><div class="btrail">of 12</div></div><div class="brow" title="Evolutionary Developmental Biology
+0 of 13 submitted posters are not in the program"><div class="blab">DEDB</div><div class="track"><span class="zero">0</span></div><div class="btrail">of 13</div></div><div class="brow" title="Botany
+1 of 7 submitted posters are not in the program"><div class="blab">DOB</div><div class="track"><div class="bar" style="width:6.25%;background:#7a9a2b"><span class="cnt">1</span></div></div><div class="btrail">of 7</div></div><div class="brow" title="Comparative Endocrinology
+0 of 21 submitted posters are not in the program"><div class="blab">DCE</div><div class="track"><span class="zero">0</span></div><div class="btrail">of 21</div></div><div class="brow" title="Ecoimmunology and Disease Ecology
+0 of 15 submitted posters are not in the program"><div class="blab">DEDE</div><div class="track"><span class="zero">0</span></div><div class="btrail">of 15</div></div><div class="brow" title="Invertebrate Zoology
+0 of 43 submitted posters are not in the program"><div class="blab">DIZ</div><div class="track"><span class="zero">0</span></div><div class="btrail">of 43</div></div><div class="brow" title="Outreach, Education, and Policy
+0 of 12 submitted posters are not in the program"><div class="blab">EDU</div><div class="track"><span class="zero">0</span></div><div class="btrail">of 12</div></div></div></div></div><h2>Scientific overlap between divisions</h2><p class="note">Mean similarity between every pair of abstracts across two divisions, from the GPT keyword vectors. Dark is alike, and the scale spans the values in the grid, so the darkest cells are the pairs worth not scheduling against each other.<br>The diagonal is blank. It is a different quantity, the mean over pairs of two <i>different</i> abstracts within one division, which measures how focused that division's own submissions are rather than how close it sits to another. It also runs several times higher than any pair of divisions, so sharing one colour scale with it left every other cell pale. Those values are listed below the grid instead.</p><div class="panel mode"><div class="ph">Presentations</div><div class="filters"><label class="lg"><input type="radio" name="source" value="talks" checked>Talks</label><label class="lg"><input type="radio" name="source" value="posters">Posters</label></div></div><div class="matrix" data-source="talks"><div class="mkey"><span class="mn">732 talks scored</span><span class="mn">0.001</span><span class="ramp"><span style="background:#fcfdbf"></span><span style="background:#feca8d"></span><span style="background:#fd9668"></span><span style="background:#f1605d"></span><span style="background:#cd4071"></span><span style="background:#9e2f7f"></span><span style="background:#6b1d81"></span><span style="background:#3b0f70"></span><span style="background:#1c1044"></span></span><span class="mn">0.136</span><span class="mh">between divisions only; the diagonal is listed below</span></div><div class="heat" style="grid-template-columns:var(--hlab) repeat(13,minmax(0,1fr))"><div class="hcorner"></div><div class="hhead" title="Ecology &amp; Evolution">DEE</div><div class="hhead" title="Comparative Biomechanics">DCB</div><div class="hhead" title="Vertebrate Morphology">DVM</div><div class="hhead" title="Animal Behavior">DAB</div><div class="hhead" title="Comparative Physiology &amp; Biochemistry">DCPB</div><div class="hhead" title="Neurobiology, Neuroethology, and Sensory Biology">DNNSB</div><div class="hhead" title="Invertebrate Zoology">DIZ</div><div class="hhead" title="Ecoimmunology and Disease Ecology">DEDE</div><div class="hhead" title="Phylogenetics and Comparative Biology">DPCB</div><div class="hhead" title="Comparative Endocrinology">DCE</div><div class="hhead" title="Evolutionary Developmental Biology">DEDB</div><div class="hhead" title="Outreach, Education, and Policy">EDU</div><div class="hhead" title="Botany">DOB</div><div class="hside" title="Ecology &amp; Evolution · 177 abstracts scored">DEE</div><div class="hself" title="Ecology &amp; Evolution
+within the division
+mean similarity 0.0801, listed beside the matrix"></div><div class="hcell dark" style="background:#feb981" title="Ecology &amp; Evolution
+Comparative Biomechanics
+mean similarity 0.0232 over 21948 pairs of abstracts">.023</div><div class="hcell" style="background:#eb5a61" title="Ecology &amp; Evolution
+Vertebrate Morphology
+mean similarity 0.0545 over 14868 pairs of abstracts">.054</div><div class="hcell" style="background:#f77b62" title="Ecology &amp; Evolution
+Animal Behavior
+mean similarity 0.0431 over 13629 pairs of abstracts">.043</div><div class="hcell" style="background:#f57261" title="Ecology &amp; Evolution
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0458 over 10443 pairs of abstracts">.046</div><div class="hcell dark" style="background:#feb27c" title="Ecology &amp; Evolution
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0252 over 9027 pairs of abstracts">.025</div><div class="hcell" style="background:#d2446e" title="Ecology &amp; Evolution
+Invertebrate Zoology
+mean similarity 0.0662 over 5841 pairs of abstracts">.066</div><div class="hcell" style="background:#f67561" title="Ecology &amp; Evolution
+Ecoimmunology and Disease Ecology
+mean similarity 0.0450 over 6195 pairs of abstracts">.045</div><div class="hcell" style="background:#b63878" title="Ecology &amp; Evolution
+Phylogenetics and Comparative Biology
+mean similarity 0.0767 over 4956 pairs of abstracts">.077</div><div class="hcell" style="background:#f46f60" title="Ecology &amp; Evolution
+Comparative Endocrinology
+mean similarity 0.0467 over 3186 pairs of abstracts">.047</div><div class="hcell" style="background:#f77b63" title="Ecology &amp; Evolution
+Evolutionary Developmental Biology
+mean similarity 0.0429 over 4071 pairs of abstracts">.043</div><div class="hcell dark" style="background:#fdedaf" title="Ecology &amp; Evolution
+Outreach, Education, and Policy
+mean similarity 0.0059 over 2478 pairs of abstracts">.006</div><div class="hcell dark" style="background:#fc9067" title="Ecology &amp; Evolution
+Botany
+mean similarity 0.0365 over 1593 pairs of abstracts">.036</div><div class="hside" title="Comparative Biomechanics · 124 abstracts scored">DCB</div><div class="hcell dark" style="background:#feb981" title="Comparative Biomechanics
+Ecology &amp; Evolution
+mean similarity 0.0232 over 21948 pairs of abstracts">.023</div><div class="hself" title="Comparative Biomechanics
+within the division
+mean similarity 0.1772, listed beside the matrix"></div><div class="hcell" style="background:#3c0f70" title="Comparative Biomechanics
+Vertebrate Morphology
+mean similarity 0.1190 over 10416 pairs of abstracts">.119</div><div class="hcell dark" style="background:#f87f63" title="Comparative Biomechanics
+Animal Behavior
+mean similarity 0.0416 over 9548 pairs of abstracts">.042</div><div class="hcell dark" style="background:#feba82" title="Comparative Biomechanics
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0227 over 7316 pairs of abstracts">.023</div><div class="hcell dark" style="background:#f88164" title="Comparative Biomechanics
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0411 over 6324 pairs of abstracts">.041</div><div class="hcell dark" style="background:#f98565" title="Comparative Biomechanics
+Invertebrate Zoology
+mean similarity 0.0397 over 4092 pairs of abstracts">.040</div><div class="hcell dark" style="background:#fde9ab" title="Comparative Biomechanics
+Ecoimmunology and Disease Ecology
+mean similarity 0.0072 over 4340 pairs of abstracts">.007</div><div class="hcell dark" style="background:#fa8a66" title="Comparative Biomechanics
+Phylogenetics and Comparative Biology
+mean similarity 0.0382 over 3472 pairs of abstracts">.038</div><div class="hcell dark" style="background:#fde3a5" title="Comparative Biomechanics
+Comparative Endocrinology
+mean similarity 0.0093 over 2232 pairs of abstracts">.009</div><div class="hcell dark" style="background:#febf85" title="Comparative Biomechanics
+Evolutionary Developmental Biology
+mean similarity 0.0210 over 2852 pairs of abstracts">.021</div><div class="hcell dark" style="background:#fddea1" title="Comparative Biomechanics
+Outreach, Education, and Policy
+mean similarity 0.0107 over 1736 pairs of abstracts">.011</div><div class="hcell dark" style="background:#f87e63" title="Comparative Biomechanics
+Botany
+mean similarity 0.0420 over 1116 pairs of abstracts">.042</div><div class="hside" title="Vertebrate Morphology · 84 abstracts scored">DVM</div><div class="hcell" style="background:#eb5a61" title="Vertebrate Morphology
+Ecology &amp; Evolution
+mean similarity 0.0545 over 14868 pairs of abstracts">.054</div><div class="hcell" style="background:#3c0f70" title="Vertebrate Morphology
+Comparative Biomechanics
+mean similarity 0.1190 over 10416 pairs of abstracts">.119</div><div class="hself" title="Vertebrate Morphology
+within the division
+mean similarity 0.2114, listed beside the matrix"></div><div class="hcell dark" style="background:#fc9267" title="Vertebrate Morphology
+Animal Behavior
+mean similarity 0.0356 over 6468 pairs of abstracts">.036</div><div class="hcell dark" style="background:#fecd90" title="Vertebrate Morphology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0166 over 4956 pairs of abstracts">.017</div><div class="hcell dark" style="background:#fa8a66" title="Vertebrate Morphology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0383 over 4284 pairs of abstracts">.038</div><div class="hcell" style="background:#e85862" title="Vertebrate Morphology
+Invertebrate Zoology
+mean similarity 0.0555 over 2772 pairs of abstracts">.056</div><div class="hcell dark" style="background:#fddc9f" title="Vertebrate Morphology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0114 over 2940 pairs of abstracts">.011</div><div class="hcell" style="background:#1c1044" title="Vertebrate Morphology
+Phylogenetics and Comparative Biology
+mean similarity 0.1364 over 2352 pairs of abstracts">.136</div><div class="hcell dark" style="background:#fec98d" title="Vertebrate Morphology
+Comparative Endocrinology
+mean similarity 0.0177 over 1512 pairs of abstracts">.018</div><div class="hcell" style="background:#b63878" title="Vertebrate Morphology
+Evolutionary Developmental Biology
+mean similarity 0.0769 over 1932 pairs of abstracts">.077</div><div class="hcell dark" style="background:#fcf4b6" title="Vertebrate Morphology
+Outreach, Education, and Policy
+mean similarity 0.0034 over 1176 pairs of abstracts">.003</div><div class="hcell" style="background:#f0605d" title="Vertebrate Morphology
+Botany
+mean similarity 0.0517 over 756 pairs of abstracts">.052</div><div class="hside" title="Animal Behavior · 77 abstracts scored">DAB</div><div class="hcell" style="background:#f77b62" title="Animal Behavior
+Ecology &amp; Evolution
+mean similarity 0.0431 over 13629 pairs of abstracts">.043</div><div class="hcell dark" style="background:#f87f63" title="Animal Behavior
+Comparative Biomechanics
+mean similarity 0.0416 over 9548 pairs of abstracts">.042</div><div class="hcell dark" style="background:#fc9267" title="Animal Behavior
+Vertebrate Morphology
+mean similarity 0.0356 over 6468 pairs of abstracts">.036</div><div class="hself" title="Animal Behavior
+within the division
+mean similarity 0.0687, listed beside the matrix"></div><div class="hcell dark" style="background:#fd9668" title="Animal Behavior
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0345 over 4543 pairs of abstracts">.035</div><div class="hcell" style="background:#f46c5f" title="Animal Behavior
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0477 over 3927 pairs of abstracts">.048</div><div class="hcell dark" style="background:#fd9668" title="Animal Behavior
+Invertebrate Zoology
+mean similarity 0.0346 over 2541 pairs of abstracts">.035</div><div class="hcell dark" style="background:#fd9d6d" title="Animal Behavior
+Ecoimmunology and Disease Ecology
+mean similarity 0.0321 over 2695 pairs of abstracts">.032</div><div class="hcell dark" style="background:#feb37d" title="Animal Behavior
+Phylogenetics and Comparative Biology
+mean similarity 0.0249 over 2156 pairs of abstracts">.025</div><div class="hcell" style="background:#ed5c5f" title="Animal Behavior
+Comparative Endocrinology
+mean similarity 0.0535 over 1386 pairs of abstracts">.053</div><div class="hcell dark" style="background:#febe84" title="Animal Behavior
+Evolutionary Developmental Biology
+mean similarity 0.0215 over 1771 pairs of abstracts">.021</div><div class="hcell dark" style="background:#fddda0" title="Animal Behavior
+Outreach, Education, and Policy
+mean similarity 0.0112 over 1078 pairs of abstracts">.011</div><div class="hcell dark" style="background:#fda371" title="Animal Behavior
+Botany
+mean similarity 0.0303 over 693 pairs of abstracts">.030</div><div class="hside" title="Comparative Physiology &amp; Biochemistry · 59 abstracts scored">DCPB</div><div class="hcell" style="background:#f57261" title="Comparative Physiology &amp; Biochemistry
+Ecology &amp; Evolution
+mean similarity 0.0458 over 10443 pairs of abstracts">.046</div><div class="hcell dark" style="background:#feba82" title="Comparative Physiology &amp; Biochemistry
+Comparative Biomechanics
+mean similarity 0.0227 over 7316 pairs of abstracts">.023</div><div class="hcell dark" style="background:#fecd90" title="Comparative Physiology &amp; Biochemistry
+Vertebrate Morphology
+mean similarity 0.0166 over 4956 pairs of abstracts">.017</div><div class="hcell dark" style="background:#fd9668" title="Comparative Physiology &amp; Biochemistry
+Animal Behavior
+mean similarity 0.0345 over 4543 pairs of abstracts">.035</div><div class="hself" title="Comparative Physiology &amp; Biochemistry
+within the division
+mean similarity 0.1199, listed beside the matrix"></div><div class="hcell dark" style="background:#fdac78" title="Comparative Physiology &amp; Biochemistry
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0272 over 3009 pairs of abstracts">.027</div><div class="hcell dark" style="background:#fd9f6e" title="Comparative Physiology &amp; Biochemistry
+Invertebrate Zoology
+mean similarity 0.0315 over 1947 pairs of abstracts">.032</div><div class="hcell" style="background:#f1605d" title="Comparative Physiology &amp; Biochemistry
+Ecoimmunology and Disease Ecology
+mean similarity 0.0516 over 2065 pairs of abstracts">.052</div><div class="hcell dark" style="background:#feb67f" title="Comparative Physiology &amp; Biochemistry
+Phylogenetics and Comparative Biology
+mean similarity 0.0241 over 1652 pairs of abstracts">.024</div><div class="hcell" style="background:#d5476d" title="Comparative Physiology &amp; Biochemistry
+Comparative Endocrinology
+mean similarity 0.0648 over 1062 pairs of abstracts">.065</div><div class="hcell dark" style="background:#fd9769" title="Comparative Physiology &amp; Biochemistry
+Evolutionary Developmental Biology
+mean similarity 0.0342 over 1357 pairs of abstracts">.034</div><div class="hcell dark" style="background:#fcf4b6" title="Comparative Physiology &amp; Biochemistry
+Outreach, Education, and Policy
+mean similarity 0.0035 over 826 pairs of abstracts">.004</div><div class="hcell dark" style="background:#f98564" title="Comparative Physiology &amp; Biochemistry
+Botany
+mean similarity 0.0399 over 531 pairs of abstracts">.040</div><div class="hside" title="Neurobiology, Neuroethology, and Sensory Biology · 51 abstracts scored">DNNSB</div><div class="hcell dark" style="background:#feb27c" title="Neurobiology, Neuroethology, and Sensory Biology
+Ecology &amp; Evolution
+mean similarity 0.0252 over 9027 pairs of abstracts">.025</div><div class="hcell dark" style="background:#f88164" title="Neurobiology, Neuroethology, and Sensory Biology
+Comparative Biomechanics
+mean similarity 0.0411 over 6324 pairs of abstracts">.041</div><div class="hcell dark" style="background:#fa8a66" title="Neurobiology, Neuroethology, and Sensory Biology
+Vertebrate Morphology
+mean similarity 0.0383 over 4284 pairs of abstracts">.038</div><div class="hcell" style="background:#f46c5f" title="Neurobiology, Neuroethology, and Sensory Biology
+Animal Behavior
+mean similarity 0.0477 over 3927 pairs of abstracts">.048</div><div class="hcell dark" style="background:#fdac78" title="Neurobiology, Neuroethology, and Sensory Biology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0272 over 3009 pairs of abstracts">.027</div><div class="hself" title="Neurobiology, Neuroethology, and Sensory Biology
+within the division
+mean similarity 0.1757, listed beside the matrix"></div><div class="hcell dark" style="background:#fd9f6f" title="Neurobiology, Neuroethology, and Sensory Biology
+Invertebrate Zoology
+mean similarity 0.0314 over 1683 pairs of abstracts">.031</div><div class="hcell dark" style="background:#fece91" title="Neurobiology, Neuroethology, and Sensory Biology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0162 over 1785 pairs of abstracts">.016</div><div class="hcell dark" style="background:#feb981" title="Neurobiology, Neuroethology, and Sensory Biology
+Phylogenetics and Comparative Biology
+mean similarity 0.0229 over 1428 pairs of abstracts">.023</div><div class="hcell dark" style="background:#fec287" title="Neurobiology, Neuroethology, and Sensory Biology
+Comparative Endocrinology
+mean similarity 0.0201 over 918 pairs of abstracts">.020</div><div class="hcell dark" style="background:#fda875" title="Neurobiology, Neuroethology, and Sensory Biology
+Evolutionary Developmental Biology
+mean similarity 0.0287 over 1173 pairs of abstracts">.029</div><div class="hcell dark" style="background:#fecd90" title="Neurobiology, Neuroethology, and Sensory Biology
+Outreach, Education, and Policy
+mean similarity 0.0165 over 714 pairs of abstracts">.017</div><div class="hcell dark" style="background:#fda06f" title="Neurobiology, Neuroethology, and Sensory Biology
+Botany
+mean similarity 0.0312 over 459 pairs of abstracts">.031</div><div class="hside" title="Invertebrate Zoology · 33 abstracts scored">DIZ</div><div class="hcell" style="background:#d2446e" title="Invertebrate Zoology
+Ecology &amp; Evolution
+mean similarity 0.0662 over 5841 pairs of abstracts">.066</div><div class="hcell dark" style="background:#f98565" title="Invertebrate Zoology
+Comparative Biomechanics
+mean similarity 0.0397 over 4092 pairs of abstracts">.040</div><div class="hcell" style="background:#e85862" title="Invertebrate Zoology
+Vertebrate Morphology
+mean similarity 0.0555 over 2772 pairs of abstracts">.056</div><div class="hcell dark" style="background:#fd9668" title="Invertebrate Zoology
+Animal Behavior
+mean similarity 0.0346 over 2541 pairs of abstracts">.035</div><div class="hcell dark" style="background:#fd9f6e" title="Invertebrate Zoology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0315 over 1947 pairs of abstracts">.032</div><div class="hcell dark" style="background:#fd9f6f" title="Invertebrate Zoology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0314 over 1683 pairs of abstracts">.031</div><div class="hself" title="Invertebrate Zoology
+within the division
+mean similarity 0.1075, listed beside the matrix"></div><div class="hcell" style="background:#f57361" title="Invertebrate Zoology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0455 over 1155 pairs of abstracts">.045</div><div class="hcell" style="background:#d2446e" title="Invertebrate Zoology
+Phylogenetics and Comparative Biology
+mean similarity 0.0663 over 924 pairs of abstracts">.066</div><div class="hcell dark" style="background:#fda472" title="Invertebrate Zoology
+Comparative Endocrinology
+mean similarity 0.0299 over 594 pairs of abstracts">.030</div><div class="hcell dark" style="background:#fdad78" title="Invertebrate Zoology
+Evolutionary Developmental Biology
+mean similarity 0.0270 over 759 pairs of abstracts">.027</div><div class="hcell dark" style="background:#fdda9d" title="Invertebrate Zoology
+Outreach, Education, and Policy
+mean similarity 0.0122 over 462 pairs of abstracts">.012</div><div class="hcell dark" style="background:#fda472" title="Invertebrate Zoology
+Botany
+mean similarity 0.0300 over 297 pairs of abstracts">.030</div><div class="hside" title="Ecoimmunology and Disease Ecology · 35 abstracts scored">DEDE</div><div class="hcell" style="background:#f67561" title="Ecoimmunology and Disease Ecology
+Ecology &amp; Evolution
+mean similarity 0.0450 over 6195 pairs of abstracts">.045</div><div class="hcell dark" style="background:#fde9ab" title="Ecoimmunology and Disease Ecology
+Comparative Biomechanics
+mean similarity 0.0072 over 4340 pairs of abstracts">.007</div><div class="hcell dark" style="background:#fddc9f" title="Ecoimmunology and Disease Ecology
+Vertebrate Morphology
+mean similarity 0.0114 over 2940 pairs of abstracts">.011</div><div class="hcell dark" style="background:#fd9d6d" title="Ecoimmunology and Disease Ecology
+Animal Behavior
+mean similarity 0.0321 over 2695 pairs of abstracts">.032</div><div class="hcell" style="background:#f1605d" title="Ecoimmunology and Disease Ecology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0516 over 2065 pairs of abstracts">.052</div><div class="hcell dark" style="background:#fece91" title="Ecoimmunology and Disease Ecology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0162 over 1785 pairs of abstracts">.016</div><div class="hcell" style="background:#f57361" title="Ecoimmunology and Disease Ecology
+Invertebrate Zoology
+mean similarity 0.0455 over 1155 pairs of abstracts">.045</div><div class="hself" title="Ecoimmunology and Disease Ecology
+within the division
+mean similarity 0.2168, listed beside the matrix"></div><div class="hcell dark" style="background:#feb37c" title="Ecoimmunology and Disease Ecology
+Phylogenetics and Comparative Biology
+mean similarity 0.0251 over 980 pairs of abstracts">.025</div><div class="hcell" style="background:#e95961" title="Ecoimmunology and Disease Ecology
+Comparative Endocrinology
+mean similarity 0.0552 over 630 pairs of abstracts">.055</div><div class="hcell dark" style="background:#fd986a" title="Ecoimmunology and Disease Ecology
+Evolutionary Developmental Biology
+mean similarity 0.0337 over 805 pairs of abstracts">.034</div><div class="hcell dark" style="background:#fcf6b8" title="Ecoimmunology and Disease Ecology
+Outreach, Education, and Policy
+mean similarity 0.0028 over 490 pairs of abstracts">.003</div><div class="hcell dark" style="background:#fed598" title="Ecoimmunology and Disease Ecology
+Botany
+mean similarity 0.0137 over 315 pairs of abstracts">.014</div><div class="hside" title="Phylogenetics and Comparative Biology · 28 abstracts scored">DPCB</div><div class="hcell" style="background:#b63878" title="Phylogenetics and Comparative Biology
+Ecology &amp; Evolution
+mean similarity 0.0767 over 4956 pairs of abstracts">.077</div><div class="hcell dark" style="background:#fa8a66" title="Phylogenetics and Comparative Biology
+Comparative Biomechanics
+mean similarity 0.0382 over 3472 pairs of abstracts">.038</div><div class="hcell" style="background:#1c1044" title="Phylogenetics and Comparative Biology
+Vertebrate Morphology
+mean similarity 0.1364 over 2352 pairs of abstracts">.136</div><div class="hcell dark" style="background:#feb37d" title="Phylogenetics and Comparative Biology
+Animal Behavior
+mean similarity 0.0249 over 2156 pairs of abstracts">.025</div><div class="hcell dark" style="background:#feb67f" title="Phylogenetics and Comparative Biology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0241 over 1652 pairs of abstracts">.024</div><div class="hcell dark" style="background:#feb981" title="Phylogenetics and Comparative Biology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0229 over 1428 pairs of abstracts">.023</div><div class="hcell" style="background:#d2446e" title="Phylogenetics and Comparative Biology
+Invertebrate Zoology
+mean similarity 0.0663 over 924 pairs of abstracts">.066</div><div class="hcell dark" style="background:#feb37c" title="Phylogenetics and Comparative Biology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0251 over 980 pairs of abstracts">.025</div><div class="hself" title="Phylogenetics and Comparative Biology
+within the division
+mean similarity 0.1385, listed beside the matrix"></div><div class="hcell dark" style="background:#fed799" title="Phylogenetics and Comparative Biology
+Comparative Endocrinology
+mean similarity 0.0133 over 504 pairs of abstracts">.013</div><div class="hcell" style="background:#b23679" title="Phylogenetics and Comparative Biology
+Evolutionary Developmental Biology
+mean similarity 0.0782 over 644 pairs of abstracts">.078</div><div class="hcell dark" style="background:#fcfbbd" title="Phylogenetics and Comparative Biology
+Outreach, Education, and Policy
+mean similarity 0.0012 over 392 pairs of abstracts">.001</div><div class="hcell dark" style="background:#f87d63" title="Phylogenetics and Comparative Biology
+Botany
+mean similarity 0.0422 over 252 pairs of abstracts">.042</div><div class="hside" title="Comparative Endocrinology · 18 abstracts scored">DCE</div><div class="hcell" style="background:#f46f60" title="Comparative Endocrinology
+Ecology &amp; Evolution
+mean similarity 0.0467 over 3186 pairs of abstracts">.047</div><div class="hcell dark" style="background:#fde3a5" title="Comparative Endocrinology
+Comparative Biomechanics
+mean similarity 0.0093 over 2232 pairs of abstracts">.009</div><div class="hcell dark" style="background:#fec98d" title="Comparative Endocrinology
+Vertebrate Morphology
+mean similarity 0.0177 over 1512 pairs of abstracts">.018</div><div class="hcell" style="background:#ed5c5f" title="Comparative Endocrinology
+Animal Behavior
+mean similarity 0.0535 over 1386 pairs of abstracts">.053</div><div class="hcell" style="background:#d5476d" title="Comparative Endocrinology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0648 over 1062 pairs of abstracts">.065</div><div class="hcell dark" style="background:#fec287" title="Comparative Endocrinology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0201 over 918 pairs of abstracts">.020</div><div class="hcell dark" style="background:#fda472" title="Comparative Endocrinology
+Invertebrate Zoology
+mean similarity 0.0299 over 594 pairs of abstracts">.030</div><div class="hcell" style="background:#e95961" title="Comparative Endocrinology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0552 over 630 pairs of abstracts">.055</div><div class="hcell dark" style="background:#fed799" title="Comparative Endocrinology
+Phylogenetics and Comparative Biology
+mean similarity 0.0133 over 504 pairs of abstracts">.013</div><div class="hself" title="Comparative Endocrinology
+within the division
+mean similarity 0.1998, listed beside the matrix"></div><div class="hcell dark" style="background:#fec287" title="Comparative Endocrinology
+Evolutionary Developmental Biology
+mean similarity 0.0202 over 414 pairs of abstracts">.020</div><div class="hcell dark" style="background:#fcfcbe" title="Comparative Endocrinology
+Outreach, Education, and Policy
+mean similarity 0.0009 over 252 pairs of abstracts">.001</div><div class="hcell dark" style="background:#febc83" title="Comparative Endocrinology
+Botany
+mean similarity 0.0220 over 162 pairs of abstracts">.022</div><div class="hside" title="Evolutionary Developmental Biology · 23 abstracts scored">DEDB</div><div class="hcell" style="background:#f77b63" title="Evolutionary Developmental Biology
+Ecology &amp; Evolution
+mean similarity 0.0429 over 4071 pairs of abstracts">.043</div><div class="hcell dark" style="background:#febf85" title="Evolutionary Developmental Biology
+Comparative Biomechanics
+mean similarity 0.0210 over 2852 pairs of abstracts">.021</div><div class="hcell" style="background:#b63878" title="Evolutionary Developmental Biology
+Vertebrate Morphology
+mean similarity 0.0769 over 1932 pairs of abstracts">.077</div><div class="hcell dark" style="background:#febe84" title="Evolutionary Developmental Biology
+Animal Behavior
+mean similarity 0.0215 over 1771 pairs of abstracts">.021</div><div class="hcell dark" style="background:#fd9769" title="Evolutionary Developmental Biology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0342 over 1357 pairs of abstracts">.034</div><div class="hcell dark" style="background:#fda875" title="Evolutionary Developmental Biology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0287 over 1173 pairs of abstracts">.029</div><div class="hcell dark" style="background:#fdad78" title="Evolutionary Developmental Biology
+Invertebrate Zoology
+mean similarity 0.0270 over 759 pairs of abstracts">.027</div><div class="hcell dark" style="background:#fd986a" title="Evolutionary Developmental Biology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0337 over 805 pairs of abstracts">.034</div><div class="hcell" style="background:#b23679" title="Evolutionary Developmental Biology
+Phylogenetics and Comparative Biology
+mean similarity 0.0782 over 644 pairs of abstracts">.078</div><div class="hcell dark" style="background:#fec287" title="Evolutionary Developmental Biology
+Comparative Endocrinology
+mean similarity 0.0202 over 414 pairs of abstracts">.020</div><div class="hself" title="Evolutionary Developmental Biology
+within the division
+mean similarity 0.1775, listed beside the matrix"></div><div class="hcell dark" style="background:#fcfdbf" title="Evolutionary Developmental Biology
+Outreach, Education, and Policy
+mean similarity 0.0005 over 322 pairs of abstracts">.001</div><div class="hcell" style="background:#9a2e7f" title="Evolutionary Developmental Biology
+Botany
+mean similarity 0.0868 over 207 pairs of abstracts">.087</div><div class="hside" title="Outreach, Education, and Policy · 14 abstracts scored">EDU</div><div class="hcell dark" style="background:#fdedaf" title="Outreach, Education, and Policy
+Ecology &amp; Evolution
+mean similarity 0.0059 over 2478 pairs of abstracts">.006</div><div class="hcell dark" style="background:#fddea1" title="Outreach, Education, and Policy
+Comparative Biomechanics
+mean similarity 0.0107 over 1736 pairs of abstracts">.011</div><div class="hcell dark" style="background:#fcf4b6" title="Outreach, Education, and Policy
+Vertebrate Morphology
+mean similarity 0.0034 over 1176 pairs of abstracts">.003</div><div class="hcell dark" style="background:#fddda0" title="Outreach, Education, and Policy
+Animal Behavior
+mean similarity 0.0112 over 1078 pairs of abstracts">.011</div><div class="hcell dark" style="background:#fcf4b6" title="Outreach, Education, and Policy
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0035 over 826 pairs of abstracts">.004</div><div class="hcell dark" style="background:#fecd90" title="Outreach, Education, and Policy
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0165 over 714 pairs of abstracts">.017</div><div class="hcell dark" style="background:#fdda9d" title="Outreach, Education, and Policy
+Invertebrate Zoology
+mean similarity 0.0122 over 462 pairs of abstracts">.012</div><div class="hcell dark" style="background:#fcf6b8" title="Outreach, Education, and Policy
+Ecoimmunology and Disease Ecology
+mean similarity 0.0028 over 490 pairs of abstracts">.003</div><div class="hcell dark" style="background:#fcfbbd" title="Outreach, Education, and Policy
+Phylogenetics and Comparative Biology
+mean similarity 0.0012 over 392 pairs of abstracts">.001</div><div class="hcell dark" style="background:#fcfcbe" title="Outreach, Education, and Policy
+Comparative Endocrinology
+mean similarity 0.0009 over 252 pairs of abstracts">.001</div><div class="hcell dark" style="background:#fcfdbf" title="Outreach, Education, and Policy
+Evolutionary Developmental Biology
+mean similarity 0.0005 over 322 pairs of abstracts">.001</div><div class="hself" title="Outreach, Education, and Policy
+within the division
+mean similarity 0.3046, listed beside the matrix"></div><div class="hcell dark" style="background:#fcf9bb" title="Outreach, Education, and Policy
+Botany
+mean similarity 0.0018 over 126 pairs of abstracts">.002</div><div class="hside" title="Botany · 9 abstracts scored">DOB</div><div class="hcell dark" style="background:#fc9067" title="Botany
+Ecology &amp; Evolution
+mean similarity 0.0365 over 1593 pairs of abstracts">.036</div><div class="hcell dark" style="background:#f87e63" title="Botany
+Comparative Biomechanics
+mean similarity 0.0420 over 1116 pairs of abstracts">.042</div><div class="hcell" style="background:#f0605d" title="Botany
+Vertebrate Morphology
+mean similarity 0.0517 over 756 pairs of abstracts">.052</div><div class="hcell dark" style="background:#fda371" title="Botany
+Animal Behavior
+mean similarity 0.0303 over 693 pairs of abstracts">.030</div><div class="hcell dark" style="background:#f98564" title="Botany
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0399 over 531 pairs of abstracts">.040</div><div class="hcell dark" style="background:#fda06f" title="Botany
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0312 over 459 pairs of abstracts">.031</div><div class="hcell dark" style="background:#fda472" title="Botany
+Invertebrate Zoology
+mean similarity 0.0300 over 297 pairs of abstracts">.030</div><div class="hcell dark" style="background:#fed598" title="Botany
+Ecoimmunology and Disease Ecology
+mean similarity 0.0137 over 315 pairs of abstracts">.014</div><div class="hcell dark" style="background:#f87d63" title="Botany
+Phylogenetics and Comparative Biology
+mean similarity 0.0422 over 252 pairs of abstracts">.042</div><div class="hcell dark" style="background:#febc83" title="Botany
+Comparative Endocrinology
+mean similarity 0.0220 over 162 pairs of abstracts">.022</div><div class="hcell" style="background:#9a2e7f" title="Botany
+Evolutionary Developmental Biology
+mean similarity 0.0868 over 207 pairs of abstracts">.087</div><div class="hcell dark" style="background:#fcf9bb" title="Botany
+Outreach, Education, and Policy
+mean similarity 0.0018 over 126 pairs of abstracts">.002</div><div class="hself" title="Botany
+within the division
+mean similarity 0.1943, listed beside the matrix"></div></div><div class="lists"><div class="toppairs"><div class="ch">Most alike pairs of divisions</div><ol><li><b>DVM</b> and <b>DPCB</b><span class="tv">0.136</span></li><li><b>DCB</b> and <b>DVM</b><span class="tv">0.119</span></li><li><b>DEDB</b> and <b>DOB</b><span class="tv">0.087</span></li><li><b>DEDB</b> and <b>DPCB</b><span class="tv">0.078</span></li><li><b>DVM</b> and <b>DEDB</b><span class="tv">0.077</span></li><li><b>DEE</b> and <b>DPCB</b><span class="tv">0.077</span></li><li><b>DIZ</b> and <b>DPCB</b><span class="tv">0.066</span></li><li><b>DEE</b> and <b>DIZ</b><span class="tv">0.066</span></li></ol></div><div class="toppairs"><div class="ch">Within a division, most focused first</div><ol><li><b>EDU</b> <span class="ln">Outreach, Education, and Policy</span><span class="tv">0.305</span></li><li><b>DEDE</b> <span class="ln">Ecoimmunology and Disease Ecology</span><span class="tv">0.217</span></li><li><b>DVM</b> <span class="ln">Vertebrate Morphology</span><span class="tv">0.211</span></li><li><b>DCE</b> <span class="ln">Comparative Endocrinology</span><span class="tv">0.200</span></li><li><b>DOB</b> <span class="ln">Botany</span><span class="tv">0.194</span></li><li><b>DEDB</b> <span class="ln">Evolutionary Developmental Biology</span><span class="tv">0.177</span></li><li><b>DCB</b> <span class="ln">Comparative Biomechanics</span><span class="tv">0.177</span></li><li><b>DNNSB</b> <span class="ln">Neurobiology, Neuroethology, and Sensory Biology</span><span class="tv">0.176</span></li><li><b>DPCB</b> <span class="ln">Phylogenetics and Comparative Biology</span><span class="tv">0.139</span></li><li><b>DCPB</b> <span class="ln">Comparative Physiology &amp; Biochemistry</span><span class="tv">0.120</span></li><li><b>DIZ</b> <span class="ln">Invertebrate Zoology</span><span class="tv">0.107</span></li><li><b>DEE</b> <span class="ln">Ecology &amp; Evolution</span><span class="tv">0.080</span></li><li><b>DAB</b> <span class="ln">Animal Behavior</span><span class="tv">0.069</span></li></ol></div></div></div><div class="matrix" data-source="posters" hidden><div class="mkey"><span class="mn">540 posters scored</span><span class="mn">0.002</span><span class="ramp"><span style="background:#fcfdbf"></span><span style="background:#feca8d"></span><span style="background:#fd9668"></span><span style="background:#f1605d"></span><span style="background:#cd4071"></span><span style="background:#9e2f7f"></span><span style="background:#6b1d81"></span><span style="background:#3b0f70"></span><span style="background:#1c1044"></span></span><span class="mn">0.124</span><span class="mh">between divisions only; the diagonal is listed below</span></div><div class="heat" style="grid-template-columns:var(--hlab) repeat(13,minmax(0,1fr))"><div class="hcorner"></div><div class="hhead" title="Ecology &amp; Evolution">DEE</div><div class="hhead" title="Comparative Biomechanics">DCB</div><div class="hhead" title="Vertebrate Morphology">DVM</div><div class="hhead" title="Animal Behavior">DAB</div><div class="hhead" title="Comparative Physiology &amp; Biochemistry">DCPB</div><div class="hhead" title="Neurobiology, Neuroethology, and Sensory Biology">DNNSB</div><div class="hhead" title="Invertebrate Zoology">DIZ</div><div class="hhead" title="Ecoimmunology and Disease Ecology">DEDE</div><div class="hhead" title="Phylogenetics and Comparative Biology">DPCB</div><div class="hhead" title="Comparative Endocrinology">DCE</div><div class="hhead" title="Evolutionary Developmental Biology">DEDB</div><div class="hhead" title="Outreach, Education, and Policy">EDU</div><div class="hhead" title="Botany">DOB</div><div class="hside" title="Ecology &amp; Evolution · 106 abstracts scored">DEE</div><div class="hself" title="Ecology &amp; Evolution
+within the division
+mean similarity 0.0727, listed beside the matrix"></div><div class="hcell dark" style="background:#febd84" title="Ecology &amp; Evolution
+Comparative Biomechanics
+mean similarity 0.0211 over 7314 pairs of abstracts">.021</div><div class="hcell dark" style="background:#fd9c6c" title="Ecology &amp; Evolution
+Vertebrate Morphology
+mean similarity 0.0307 over 6996 pairs of abstracts">.031</div><div class="hcell" style="background:#f57261" title="Ecology &amp; Evolution
+Animal Behavior
+mean similarity 0.0427 over 7102 pairs of abstracts">.043</div><div class="hcell" style="background:#e85862" title="Ecology &amp; Evolution
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0515 over 7102 pairs of abstracts">.051</div><div class="hcell dark" style="background:#fd9f6e" title="Ecology &amp; Evolution
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0300 over 4452 pairs of abstracts">.030</div><div class="hcell" style="background:#ea5961" title="Ecology &amp; Evolution
+Invertebrate Zoology
+mean similarity 0.0509 over 4558 pairs of abstracts">.051</div><div class="hcell" style="background:#d4466d" title="Ecology &amp; Evolution
+Ecoimmunology and Disease Ecology
+mean similarity 0.0601 over 1590 pairs of abstracts">.060</div><div class="hcell" style="background:#a2307e" title="Ecology &amp; Evolution
+Phylogenetics and Comparative Biology
+mean similarity 0.0770 over 1272 pairs of abstracts">.077</div><div class="hcell" style="background:#e95961" title="Ecology &amp; Evolution
+Comparative Endocrinology
+mean similarity 0.0511 over 2226 pairs of abstracts">.051</div><div class="hcell dark" style="background:#f77d63" title="Ecology &amp; Evolution
+Evolutionary Developmental Biology
+mean similarity 0.0395 over 1378 pairs of abstracts">.040</div><div class="hcell dark" style="background:#fd9f6e" title="Ecology &amp; Evolution
+Outreach, Education, and Policy
+mean similarity 0.0300 over 1272 pairs of abstracts">.030</div><div class="hcell" style="background:#e85862" title="Ecology &amp; Evolution
+Botany
+mean similarity 0.0514 over 742 pairs of abstracts">.051</div><div class="hside" title="Comparative Biomechanics · 69 abstracts scored">DCB</div><div class="hcell dark" style="background:#febd84" title="Comparative Biomechanics
+Ecology &amp; Evolution
+mean similarity 0.0211 over 7314 pairs of abstracts">.021</div><div class="hself" title="Comparative Biomechanics
+within the division
+mean similarity 0.1547, listed beside the matrix"></div><div class="hcell" style="background:#1c1044" title="Comparative Biomechanics
+Vertebrate Morphology
+mean similarity 0.1238 over 4554 pairs of abstracts">.124</div><div class="hcell dark" style="background:#fda271" title="Comparative Biomechanics
+Animal Behavior
+mean similarity 0.0290 over 4623 pairs of abstracts">.029</div><div class="hcell dark" style="background:#fecf92" title="Comparative Biomechanics
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0158 over 4623 pairs of abstracts">.016</div><div class="hcell dark" style="background:#fb8c66" title="Comparative Biomechanics
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0353 over 2898 pairs of abstracts">.035</div><div class="hcell dark" style="background:#fd9668" title="Comparative Biomechanics
+Invertebrate Zoology
+mean similarity 0.0324 over 2967 pairs of abstracts">.032</div><div class="hcell dark" style="background:#fdecae" title="Comparative Biomechanics
+Ecoimmunology and Disease Ecology
+mean similarity 0.0073 over 1035 pairs of abstracts">.007</div><div class="hcell dark" style="background:#fec388" title="Comparative Biomechanics
+Phylogenetics and Comparative Biology
+mean similarity 0.0195 over 828 pairs of abstracts">.019</div><div class="hcell dark" style="background:#fde4a7" title="Comparative Biomechanics
+Comparative Endocrinology
+mean similarity 0.0095 over 1449 pairs of abstracts">.009</div><div class="hcell" style="background:#f2635e" title="Comparative Biomechanics
+Evolutionary Developmental Biology
+mean similarity 0.0468 over 897 pairs of abstracts">.047</div><div class="hcell dark" style="background:#feb780" title="Comparative Biomechanics
+Outreach, Education, and Policy
+mean similarity 0.0228 over 828 pairs of abstracts">.023</div><div class="hcell" style="background:#d3466e" title="Comparative Biomechanics
+Botany
+mean similarity 0.0603 over 483 pairs of abstracts">.060</div><div class="hside" title="Vertebrate Morphology · 66 abstracts scored">DVM</div><div class="hcell dark" style="background:#fd9c6c" title="Vertebrate Morphology
+Ecology &amp; Evolution
+mean similarity 0.0307 over 6996 pairs of abstracts">.031</div><div class="hcell" style="background:#1c1044" title="Vertebrate Morphology
+Comparative Biomechanics
+mean similarity 0.1238 over 4554 pairs of abstracts">.124</div><div class="hself" title="Vertebrate Morphology
+within the division
+mean similarity 0.1606, listed beside the matrix"></div><div class="hcell dark" style="background:#feb981" title="Vertebrate Morphology
+Animal Behavior
+mean similarity 0.0224 over 4422 pairs of abstracts">.022</div><div class="hcell dark" style="background:#febc83" title="Vertebrate Morphology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0214 over 4422 pairs of abstracts">.021</div><div class="hcell dark" style="background:#fb8d66" title="Vertebrate Morphology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0352 over 2772 pairs of abstracts">.035</div><div class="hcell dark" style="background:#f88063" title="Vertebrate Morphology
+Invertebrate Zoology
+mean similarity 0.0388 over 2838 pairs of abstracts">.039</div><div class="hcell dark" style="background:#fcfdbf" title="Vertebrate Morphology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0021 over 990 pairs of abstracts">.002</div><div class="hcell" style="background:#f1615d" title="Vertebrate Morphology
+Phylogenetics and Comparative Biology
+mean similarity 0.0475 over 792 pairs of abstracts">.048</div><div class="hcell dark" style="background:#fddb9d" title="Vertebrate Morphology
+Comparative Endocrinology
+mean similarity 0.0123 over 1386 pairs of abstracts">.012</div><div class="hcell" style="background:#af357a" title="Vertebrate Morphology
+Evolutionary Developmental Biology
+mean similarity 0.0728 over 858 pairs of abstracts">.073</div><div class="hcell dark" style="background:#fecb8e" title="Vertebrate Morphology
+Outreach, Education, and Policy
+mean similarity 0.0171 over 792 pairs of abstracts">.017</div><div class="hcell" style="background:#b43779" title="Vertebrate Morphology
+Botany
+mean similarity 0.0711 over 462 pairs of abstracts">.071</div><div class="hside" title="Animal Behavior · 67 abstracts scored">DAB</div><div class="hcell" style="background:#f57261" title="Animal Behavior
+Ecology &amp; Evolution
+mean similarity 0.0427 over 7102 pairs of abstracts">.043</div><div class="hcell dark" style="background:#fda271" title="Animal Behavior
+Comparative Biomechanics
+mean similarity 0.0290 over 4623 pairs of abstracts">.029</div><div class="hcell dark" style="background:#feb981" title="Animal Behavior
+Vertebrate Morphology
+mean similarity 0.0224 over 4422 pairs of abstracts">.022</div><div class="hself" title="Animal Behavior
+within the division
+mean similarity 0.0853, listed beside the matrix"></div><div class="hcell" style="background:#f77b63" title="Animal Behavior
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0400 over 4489 pairs of abstracts">.040</div><div class="hcell" style="background:#e45464" title="Animal Behavior
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0533 over 2814 pairs of abstracts">.053</div><div class="hcell dark" style="background:#fb8f66" title="Animal Behavior
+Invertebrate Zoology
+mean similarity 0.0346 over 2881 pairs of abstracts">.035</div><div class="hcell dark" style="background:#f98464" title="Animal Behavior
+Ecoimmunology and Disease Ecology
+mean similarity 0.0376 over 1005 pairs of abstracts">.038</div><div class="hcell dark" style="background:#feb27c" title="Animal Behavior
+Phylogenetics and Comparative Biology
+mean similarity 0.0244 over 804 pairs of abstracts">.024</div><div class="hcell" style="background:#f2635e" title="Animal Behavior
+Comparative Endocrinology
+mean similarity 0.0470 over 1407 pairs of abstracts">.047</div><div class="hcell dark" style="background:#feb27c" title="Animal Behavior
+Evolutionary Developmental Biology
+mean similarity 0.0242 over 871 pairs of abstracts">.024</div><div class="hcell dark" style="background:#fed093" title="Animal Behavior
+Outreach, Education, and Policy
+mean similarity 0.0156 over 804 pairs of abstracts">.016</div><div class="hcell" style="background:#e35465" title="Animal Behavior
+Botany
+mean similarity 0.0535 over 469 pairs of abstracts">.053</div><div class="hside" title="Comparative Physiology &amp; Biochemistry · 67 abstracts scored">DCPB</div><div class="hcell" style="background:#e85862" title="Comparative Physiology &amp; Biochemistry
+Ecology &amp; Evolution
+mean similarity 0.0515 over 7102 pairs of abstracts">.051</div><div class="hcell dark" style="background:#fecf92" title="Comparative Physiology &amp; Biochemistry
+Comparative Biomechanics
+mean similarity 0.0158 over 4623 pairs of abstracts">.016</div><div class="hcell dark" style="background:#febc83" title="Comparative Physiology &amp; Biochemistry
+Vertebrate Morphology
+mean similarity 0.0214 over 4422 pairs of abstracts">.021</div><div class="hcell" style="background:#f77b63" title="Comparative Physiology &amp; Biochemistry
+Animal Behavior
+mean similarity 0.0400 over 4489 pairs of abstracts">.040</div><div class="hself" title="Comparative Physiology &amp; Biochemistry
+within the division
+mean similarity 0.1067, listed beside the matrix"></div><div class="hcell" style="background:#f36a5f" title="Comparative Physiology &amp; Biochemistry
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0450 over 2814 pairs of abstracts">.045</div><div class="hcell" style="background:#f57261" title="Comparative Physiology &amp; Biochemistry
+Invertebrate Zoology
+mean similarity 0.0426 over 2881 pairs of abstracts">.043</div><div class="hcell" style="background:#d84a6b" title="Comparative Physiology &amp; Biochemistry
+Ecoimmunology and Disease Ecology
+mean similarity 0.0584 over 1005 pairs of abstracts">.058</div><div class="hcell dark" style="background:#f77c63" title="Comparative Physiology &amp; Biochemistry
+Phylogenetics and Comparative Biology
+mean similarity 0.0398 over 804 pairs of abstracts">.040</div><div class="hcell" style="background:#511578" title="Comparative Physiology &amp; Biochemistry
+Comparative Endocrinology
+mean similarity 0.1016 over 1407 pairs of abstracts">.102</div><div class="hcell" style="background:#e55664" title="Comparative Physiology &amp; Biochemistry
+Evolutionary Developmental Biology
+mean similarity 0.0527 over 871 pairs of abstracts">.053</div><div class="hcell dark" style="background:#fed497" title="Comparative Physiology &amp; Biochemistry
+Outreach, Education, and Policy
+mean similarity 0.0144 over 804 pairs of abstracts">.014</div><div class="hcell" style="background:#e45564" title="Comparative Physiology &amp; Biochemistry
+Botany
+mean similarity 0.0531 over 469 pairs of abstracts">.053</div><div class="hside" title="Neurobiology, Neuroethology, and Sensory Biology · 42 abstracts scored">DNNSB</div><div class="hcell dark" style="background:#fd9f6e" title="Neurobiology, Neuroethology, and Sensory Biology
+Ecology &amp; Evolution
+mean similarity 0.0300 over 4452 pairs of abstracts">.030</div><div class="hcell dark" style="background:#fb8c66" title="Neurobiology, Neuroethology, and Sensory Biology
+Comparative Biomechanics
+mean similarity 0.0353 over 2898 pairs of abstracts">.035</div><div class="hcell dark" style="background:#fb8d66" title="Neurobiology, Neuroethology, and Sensory Biology
+Vertebrate Morphology
+mean similarity 0.0352 over 2772 pairs of abstracts">.035</div><div class="hcell" style="background:#e45464" title="Neurobiology, Neuroethology, and Sensory Biology
+Animal Behavior
+mean similarity 0.0533 over 2814 pairs of abstracts">.053</div><div class="hcell" style="background:#f36a5f" title="Neurobiology, Neuroethology, and Sensory Biology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0450 over 2814 pairs of abstracts">.045</div><div class="hself" title="Neurobiology, Neuroethology, and Sensory Biology
+within the division
+mean similarity 0.1474, listed beside the matrix"></div><div class="hcell" style="background:#f2645e" title="Neurobiology, Neuroethology, and Sensory Biology
+Invertebrate Zoology
+mean similarity 0.0465 over 1806 pairs of abstracts">.046</div><div class="hcell dark" style="background:#feb27c" title="Neurobiology, Neuroethology, and Sensory Biology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0242 over 630 pairs of abstracts">.024</div><div class="hcell dark" style="background:#fdae79" title="Neurobiology, Neuroethology, and Sensory Biology
+Phylogenetics and Comparative Biology
+mean similarity 0.0254 over 504 pairs of abstracts">.025</div><div class="hcell dark" style="background:#feb37c" title="Neurobiology, Neuroethology, and Sensory Biology
+Comparative Endocrinology
+mean similarity 0.0241 over 882 pairs of abstracts">.024</div><div class="hcell" style="background:#ee5d5f" title="Neurobiology, Neuroethology, and Sensory Biology
+Evolutionary Developmental Biology
+mean similarity 0.0491 over 546 pairs of abstracts">.049</div><div class="hcell dark" style="background:#fde5a7" title="Neurobiology, Neuroethology, and Sensory Biology
+Outreach, Education, and Policy
+mean similarity 0.0094 over 504 pairs of abstracts">.009</div><div class="hcell" style="background:#cd4071" title="Neurobiology, Neuroethology, and Sensory Biology
+Botany
+mean similarity 0.0628 over 294 pairs of abstracts">.063</div><div class="hside" title="Invertebrate Zoology · 43 abstracts scored">DIZ</div><div class="hcell" style="background:#ea5961" title="Invertebrate Zoology
+Ecology &amp; Evolution
+mean similarity 0.0509 over 4558 pairs of abstracts">.051</div><div class="hcell dark" style="background:#fd9668" title="Invertebrate Zoology
+Comparative Biomechanics
+mean similarity 0.0324 over 2967 pairs of abstracts">.032</div><div class="hcell dark" style="background:#f88063" title="Invertebrate Zoology
+Vertebrate Morphology
+mean similarity 0.0388 over 2838 pairs of abstracts">.039</div><div class="hcell dark" style="background:#fb8f66" title="Invertebrate Zoology
+Animal Behavior
+mean similarity 0.0346 over 2881 pairs of abstracts">.035</div><div class="hcell" style="background:#f57261" title="Invertebrate Zoology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0426 over 2881 pairs of abstracts">.043</div><div class="hcell" style="background:#f2645e" title="Invertebrate Zoology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0465 over 1806 pairs of abstracts">.046</div><div class="hself" title="Invertebrate Zoology
+within the division
+mean similarity 0.0808, listed beside the matrix"></div><div class="hcell dark" style="background:#f88063" title="Invertebrate Zoology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0388 over 645 pairs of abstracts">.039</div><div class="hcell" style="background:#8c2980" title="Invertebrate Zoology
+Phylogenetics and Comparative Biology
+mean similarity 0.0836 over 516 pairs of abstracts">.084</div><div class="hcell dark" style="background:#fb8f67" title="Invertebrate Zoology
+Comparative Endocrinology
+mean similarity 0.0345 over 903 pairs of abstracts">.035</div><div class="hcell" style="background:#f57160" title="Invertebrate Zoology
+Evolutionary Developmental Biology
+mean similarity 0.0430 over 559 pairs of abstracts">.043</div><div class="hcell dark" style="background:#fdab77" title="Invertebrate Zoology
+Outreach, Education, and Policy
+mean similarity 0.0263 over 516 pairs of abstracts">.026</div><div class="hcell" style="background:#f67762" title="Invertebrate Zoology
+Botany
+mean similarity 0.0413 over 301 pairs of abstracts">.041</div><div class="hside" title="Ecoimmunology and Disease Ecology · 15 abstracts scored">DEDE</div><div class="hcell" style="background:#d4466d" title="Ecoimmunology and Disease Ecology
+Ecology &amp; Evolution
+mean similarity 0.0601 over 1590 pairs of abstracts">.060</div><div class="hcell dark" style="background:#fdecae" title="Ecoimmunology and Disease Ecology
+Comparative Biomechanics
+mean similarity 0.0073 over 1035 pairs of abstracts">.007</div><div class="hcell dark" style="background:#fcfdbf" title="Ecoimmunology and Disease Ecology
+Vertebrate Morphology
+mean similarity 0.0021 over 990 pairs of abstracts">.002</div><div class="hcell dark" style="background:#f98464" title="Ecoimmunology and Disease Ecology
+Animal Behavior
+mean similarity 0.0376 over 1005 pairs of abstracts">.038</div><div class="hcell" style="background:#d84a6b" title="Ecoimmunology and Disease Ecology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0584 over 1005 pairs of abstracts">.058</div><div class="hcell dark" style="background:#feb27c" title="Ecoimmunology and Disease Ecology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0242 over 630 pairs of abstracts">.024</div><div class="hcell dark" style="background:#f88063" title="Ecoimmunology and Disease Ecology
+Invertebrate Zoology
+mean similarity 0.0388 over 645 pairs of abstracts">.039</div><div class="hself" title="Ecoimmunology and Disease Ecology
+within the division
+mean similarity 0.1672, listed beside the matrix"></div><div class="hcell dark" style="background:#fd9b6b" title="Ecoimmunology and Disease Ecology
+Phylogenetics and Comparative Biology
+mean similarity 0.0311 over 180 pairs of abstracts">.031</div><div class="hcell" style="background:#e65763" title="Ecoimmunology and Disease Ecology
+Comparative Endocrinology
+mean similarity 0.0522 over 315 pairs of abstracts">.052</div><div class="hcell dark" style="background:#fecf92" title="Ecoimmunology and Disease Ecology
+Evolutionary Developmental Biology
+mean similarity 0.0157 over 195 pairs of abstracts">.016</div><div class="hcell dark" style="background:#fec086" title="Ecoimmunology and Disease Ecology
+Outreach, Education, and Policy
+mean similarity 0.0201 over 180 pairs of abstracts">.020</div><div class="hcell dark" style="background:#fdae79" title="Ecoimmunology and Disease Ecology
+Botany
+mean similarity 0.0255 over 105 pairs of abstracts">.025</div><div class="hside" title="Phylogenetics and Comparative Biology · 12 abstracts scored">DPCB</div><div class="hcell" style="background:#a2307e" title="Phylogenetics and Comparative Biology
+Ecology &amp; Evolution
+mean similarity 0.0770 over 1272 pairs of abstracts">.077</div><div class="hcell dark" style="background:#fec388" title="Phylogenetics and Comparative Biology
+Comparative Biomechanics
+mean similarity 0.0195 over 828 pairs of abstracts">.019</div><div class="hcell" style="background:#f1615d" title="Phylogenetics and Comparative Biology
+Vertebrate Morphology
+mean similarity 0.0475 over 792 pairs of abstracts">.048</div><div class="hcell dark" style="background:#feb27c" title="Phylogenetics and Comparative Biology
+Animal Behavior
+mean similarity 0.0244 over 804 pairs of abstracts">.024</div><div class="hcell dark" style="background:#f77c63" title="Phylogenetics and Comparative Biology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0398 over 804 pairs of abstracts">.040</div><div class="hcell dark" style="background:#fdae79" title="Phylogenetics and Comparative Biology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0254 over 504 pairs of abstracts">.025</div><div class="hcell" style="background:#8c2980" title="Phylogenetics and Comparative Biology
+Invertebrate Zoology
+mean similarity 0.0836 over 516 pairs of abstracts">.084</div><div class="hcell dark" style="background:#fd9b6b" title="Phylogenetics and Comparative Biology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0311 over 180 pairs of abstracts">.031</div><div class="hself" title="Phylogenetics and Comparative Biology
+within the division
+mean similarity 0.1714, listed beside the matrix"></div><div class="hcell dark" style="background:#fa8865" title="Phylogenetics and Comparative Biology
+Comparative Endocrinology
+mean similarity 0.0365 over 252 pairs of abstracts">.036</div><div class="hcell" style="background:#ad347b" title="Phylogenetics and Comparative Biology
+Evolutionary Developmental Biology
+mean similarity 0.0733 over 156 pairs of abstracts">.073</div><div class="hcell dark" style="background:#fb8c66" title="Phylogenetics and Comparative Biology
+Outreach, Education, and Policy
+mean similarity 0.0353 over 144 pairs of abstracts">.035</div><div class="hcell dark" style="background:#fb8b66" title="Phylogenetics and Comparative Biology
+Botany
+mean similarity 0.0356 over 84 pairs of abstracts">.036</div><div class="hside" title="Comparative Endocrinology · 21 abstracts scored">DCE</div><div class="hcell" style="background:#e95961" title="Comparative Endocrinology
+Ecology &amp; Evolution
+mean similarity 0.0511 over 2226 pairs of abstracts">.051</div><div class="hcell dark" style="background:#fde4a7" title="Comparative Endocrinology
+Comparative Biomechanics
+mean similarity 0.0095 over 1449 pairs of abstracts">.009</div><div class="hcell dark" style="background:#fddb9d" title="Comparative Endocrinology
+Vertebrate Morphology
+mean similarity 0.0123 over 1386 pairs of abstracts">.012</div><div class="hcell" style="background:#f2635e" title="Comparative Endocrinology
+Animal Behavior
+mean similarity 0.0470 over 1407 pairs of abstracts">.047</div><div class="hcell" style="background:#511578" title="Comparative Endocrinology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.1016 over 1407 pairs of abstracts">.102</div><div class="hcell dark" style="background:#feb37c" title="Comparative Endocrinology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0241 over 882 pairs of abstracts">.024</div><div class="hcell dark" style="background:#fb8f67" title="Comparative Endocrinology
+Invertebrate Zoology
+mean similarity 0.0345 over 903 pairs of abstracts">.035</div><div class="hcell" style="background:#e65763" title="Comparative Endocrinology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0522 over 315 pairs of abstracts">.052</div><div class="hcell dark" style="background:#fa8865" title="Comparative Endocrinology
+Phylogenetics and Comparative Biology
+mean similarity 0.0365 over 252 pairs of abstracts">.036</div><div class="hself" title="Comparative Endocrinology
+within the division
+mean similarity 0.3078, listed beside the matrix"></div><div class="hcell" style="background:#ca3f72" title="Comparative Endocrinology
+Evolutionary Developmental Biology
+mean similarity 0.0640 over 273 pairs of abstracts">.064</div><div class="hcell dark" style="background:#fcf1b3" title="Comparative Endocrinology
+Outreach, Education, and Policy
+mean similarity 0.0056 over 252 pairs of abstracts">.006</div><div class="hcell dark" style="background:#fed194" title="Comparative Endocrinology
+Botany
+mean similarity 0.0153 over 147 pairs of abstracts">.015</div><div class="hside" title="Evolutionary Developmental Biology · 13 abstracts scored">DEDB</div><div class="hcell dark" style="background:#f77d63" title="Evolutionary Developmental Biology
+Ecology &amp; Evolution
+mean similarity 0.0395 over 1378 pairs of abstracts">.040</div><div class="hcell" style="background:#f2635e" title="Evolutionary Developmental Biology
+Comparative Biomechanics
+mean similarity 0.0468 over 897 pairs of abstracts">.047</div><div class="hcell" style="background:#af357a" title="Evolutionary Developmental Biology
+Vertebrate Morphology
+mean similarity 0.0728 over 858 pairs of abstracts">.073</div><div class="hcell dark" style="background:#feb27c" title="Evolutionary Developmental Biology
+Animal Behavior
+mean similarity 0.0242 over 871 pairs of abstracts">.024</div><div class="hcell" style="background:#e55664" title="Evolutionary Developmental Biology
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0527 over 871 pairs of abstracts">.053</div><div class="hcell" style="background:#ee5d5f" title="Evolutionary Developmental Biology
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0491 over 546 pairs of abstracts">.049</div><div class="hcell" style="background:#f57160" title="Evolutionary Developmental Biology
+Invertebrate Zoology
+mean similarity 0.0430 over 559 pairs of abstracts">.043</div><div class="hcell dark" style="background:#fecf92" title="Evolutionary Developmental Biology
+Ecoimmunology and Disease Ecology
+mean similarity 0.0157 over 195 pairs of abstracts">.016</div><div class="hcell" style="background:#ad347b" title="Evolutionary Developmental Biology
+Phylogenetics and Comparative Biology
+mean similarity 0.0733 over 156 pairs of abstracts">.073</div><div class="hcell" style="background:#ca3f72" title="Evolutionary Developmental Biology
+Comparative Endocrinology
+mean similarity 0.0640 over 273 pairs of abstracts">.064</div><div class="hself" title="Evolutionary Developmental Biology
+within the division
+mean similarity 0.1287, listed beside the matrix"></div><div class="hcell dark" style="background:#fddfa2" title="Evolutionary Developmental Biology
+Outreach, Education, and Policy
+mean similarity 0.0110 over 156 pairs of abstracts">.011</div><div class="hcell dark" style="background:#fec086" title="Evolutionary Developmental Biology
+Botany
+mean similarity 0.0202 over 91 pairs of abstracts">.020</div><div class="hside" title="Outreach, Education, and Policy · 12 abstracts scored">EDU</div><div class="hcell dark" style="background:#fd9f6e" title="Outreach, Education, and Policy
+Ecology &amp; Evolution
+mean similarity 0.0300 over 1272 pairs of abstracts">.030</div><div class="hcell dark" style="background:#feb780" title="Outreach, Education, and Policy
+Comparative Biomechanics
+mean similarity 0.0228 over 828 pairs of abstracts">.023</div><div class="hcell dark" style="background:#fecb8e" title="Outreach, Education, and Policy
+Vertebrate Morphology
+mean similarity 0.0171 over 792 pairs of abstracts">.017</div><div class="hcell dark" style="background:#fed093" title="Outreach, Education, and Policy
+Animal Behavior
+mean similarity 0.0156 over 804 pairs of abstracts">.016</div><div class="hcell dark" style="background:#fed497" title="Outreach, Education, and Policy
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0144 over 804 pairs of abstracts">.014</div><div class="hcell dark" style="background:#fde5a7" title="Outreach, Education, and Policy
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0094 over 504 pairs of abstracts">.009</div><div class="hcell dark" style="background:#fdab77" title="Outreach, Education, and Policy
+Invertebrate Zoology
+mean similarity 0.0263 over 516 pairs of abstracts">.026</div><div class="hcell dark" style="background:#fec086" title="Outreach, Education, and Policy
+Ecoimmunology and Disease Ecology
+mean similarity 0.0201 over 180 pairs of abstracts">.020</div><div class="hcell dark" style="background:#fb8c66" title="Outreach, Education, and Policy
+Phylogenetics and Comparative Biology
+mean similarity 0.0353 over 144 pairs of abstracts">.035</div><div class="hcell dark" style="background:#fcf1b3" title="Outreach, Education, and Policy
+Comparative Endocrinology
+mean similarity 0.0056 over 252 pairs of abstracts">.006</div><div class="hcell dark" style="background:#fddfa2" title="Outreach, Education, and Policy
+Evolutionary Developmental Biology
+mean similarity 0.0110 over 156 pairs of abstracts">.011</div><div class="hself" title="Outreach, Education, and Policy
+within the division
+mean similarity 0.1344, listed beside the matrix"></div><div class="hcell dark" style="background:#fc9367" title="Outreach, Education, and Policy
+Botany
+mean similarity 0.0334 over 84 pairs of abstracts">.033</div><div class="hside" title="Botany · 7 abstracts scored">DOB</div><div class="hcell" style="background:#e85862" title="Botany
+Ecology &amp; Evolution
+mean similarity 0.0514 over 742 pairs of abstracts">.051</div><div class="hcell" style="background:#d3466e" title="Botany
+Comparative Biomechanics
+mean similarity 0.0603 over 483 pairs of abstracts">.060</div><div class="hcell" style="background:#b43779" title="Botany
+Vertebrate Morphology
+mean similarity 0.0711 over 462 pairs of abstracts">.071</div><div class="hcell" style="background:#e35465" title="Botany
+Animal Behavior
+mean similarity 0.0535 over 469 pairs of abstracts">.053</div><div class="hcell" style="background:#e45564" title="Botany
+Comparative Physiology &amp; Biochemistry
+mean similarity 0.0531 over 469 pairs of abstracts">.053</div><div class="hcell" style="background:#cd4071" title="Botany
+Neurobiology, Neuroethology, and Sensory Biology
+mean similarity 0.0628 over 294 pairs of abstracts">.063</div><div class="hcell" style="background:#f67762" title="Botany
+Invertebrate Zoology
+mean similarity 0.0413 over 301 pairs of abstracts">.041</div><div class="hcell dark" style="background:#fdae79" title="Botany
+Ecoimmunology and Disease Ecology
+mean similarity 0.0255 over 105 pairs of abstracts">.025</div><div class="hcell dark" style="background:#fb8b66" title="Botany
+Phylogenetics and Comparative Biology
+mean similarity 0.0356 over 84 pairs of abstracts">.036</div><div class="hcell dark" style="background:#fed194" title="Botany
+Comparative Endocrinology
+mean similarity 0.0153 over 147 pairs of abstracts">.015</div><div class="hcell dark" style="background:#fec086" title="Botany
+Evolutionary Developmental Biology
+mean similarity 0.0202 over 91 pairs of abstracts">.020</div><div class="hcell dark" style="background:#fc9367" title="Botany
+Outreach, Education, and Policy
+mean similarity 0.0334 over 84 pairs of abstracts">.033</div><div class="hself" title="Botany
+within the division
+mean similarity 0.1901, listed beside the matrix"></div></div><div class="lists"><div class="toppairs"><div class="ch">Most alike pairs of divisions</div><ol><li><b>DCB</b> and <b>DVM</b><span class="tv">0.124</span></li><li><b>DCPB</b> and <b>DCE</b><span class="tv">0.102</span></li><li><b>DIZ</b> and <b>DPCB</b><span class="tv">0.084</span></li><li><b>DEE</b> and <b>DPCB</b><span class="tv">0.077</span></li><li><b>DEDB</b> and <b>DPCB</b><span class="tv">0.073</span></li><li><b>DVM</b> and <b>DEDB</b><span class="tv">0.073</span></li><li><b>DVM</b> and <b>DOB</b><span class="tv">0.071</span></li><li><b>DEDB</b> and <b>DCE</b><span class="tv">0.064</span></li></ol></div><div class="toppairs"><div class="ch">Within a division, most focused first</div><ol><li><b>DCE</b> <span class="ln">Comparative Endocrinology</span><span class="tv">0.308</span></li><li><b>DOB</b> <span class="ln">Botany</span><span class="tv">0.190</span></li><li><b>DPCB</b> <span class="ln">Phylogenetics and Comparative Biology</span><span class="tv">0.171</span></li><li><b>DEDE</b> <span class="ln">Ecoimmunology and Disease Ecology</span><span class="tv">0.167</span></li><li><b>DVM</b> <span class="ln">Vertebrate Morphology</span><span class="tv">0.161</span></li><li><b>DCB</b> <span class="ln">Comparative Biomechanics</span><span class="tv">0.155</span></li><li><b>DNNSB</b> <span class="ln">Neurobiology, Neuroethology, and Sensory Biology</span><span class="tv">0.147</span></li><li><b>EDU</b> <span class="ln">Outreach, Education, and Policy</span><span class="tv">0.134</span></li><li><b>DEDB</b> <span class="ln">Evolutionary Developmental Biology</span><span class="tv">0.129</span></li><li><b>DCPB</b> <span class="ln">Comparative Physiology &amp; Biochemistry</span><span class="tv">0.107</span></li><li><b>DAB</b> <span class="ln">Animal Behavior</span><span class="tv">0.085</span></li><li><b>DIZ</b> <span class="ln">Invertebrate Zoology</span><span class="tv">0.081</span></li><li><b>DEE</b> <span class="ln">Ecology &amp; Evolution</span><span class="tv">0.073</span></li></ol></div></div></div><h2>Presentations per session</h2><p class="note">How many sessions hold each number of presentations. Each chart is scaled to its own tallest bar, given in its heading, so the shape of one distribution cannot be read as a height against another. A wide spread in the poster sessions is normal; a wide spread in the talk sessions means some rooms empty out early.</p><div class="stack"><div class="chart"><div class="ch">Talk sessions<span class="cn">144 sessions, 6.6 presentations each on average; tallest bar is 51 sessions of 6</span></div><div class="plot" style="height:96px"><div class="cols"><div class="col" title="0 session(s) of 1 presentation"></div><div class="col" title="2 session(s) of 2 presentations"><div class="colfill" style="height:3.92%;background:#4a6785"></div></div><div class="col" title="0 session(s) of 3 presentations"></div><div class="col" title="5 session(s) of 4 presentations"><div class="colfill" style="height:9.80%;background:#4a6785"></div></div><div class="col" title="12 session(s) of 5 presentations"><div class="colfill" style="height:23.53%;background:#4a6785"></div></div><div class="col" title="51 session(s) of 6 presentations"><div class="colfill" style="height:100.00%;background:#4a6785"></div></div><div class="col" title="36 session(s) of 7 presentations"><div class="colfill" style="height:70.59%;background:#4a6785"></div></div><div class="col" title="37 session(s) of 8 presentations"><div class="colfill" style="height:72.55%;background:#4a6785"></div></div><div class="col" title="1 session(s) of 9 presentations"><div class="colfill" style="height:1.96%;background:#4a6785"></div></div></div></div><div class="ticks"><div class="tick">1</div><div class="tick">2</div><div class="tick">3</div><div class="tick">4</div><div class="tick">5</div><div class="tick">6</div><div class="tick">7</div><div class="tick">8</div><div class="tick">9</div></div></div><div class="chart"><div class="ch">Poster sessions<span class="cn">81 sessions, 9.2 presentations each on average; tallest bar is 9 sessions of 7</span></div><div class="plot" style="height:96px"><div class="cols"><div class="col" title="2 session(s) of 1 presentation"><div class="colfill" style="height:22.22%;background:#6b7f95"></div></div><div class="col" title="1 session(s) of 2 presentations"><div class="colfill" style="height:11.11%;background:#6b7f95"></div></div><div class="col" title="6 session(s) of 3 presentations"><div class="colfill" style="height:66.67%;background:#6b7f95"></div></div><div class="col" title="4 session(s) of 4 presentations"><div class="colfill" style="height:44.44%;background:#6b7f95"></div></div><div class="col" title="3 session(s) of 5 presentations"><div class="colfill" style="height:33.33%;background:#6b7f95"></div></div><div class="col" title="8 session(s) of 6 presentations"><div class="colfill" style="height:88.89%;background:#6b7f95"></div></div><div class="col" title="9 session(s) of 7 presentations"><div class="colfill" style="height:100.00%;background:#6b7f95"></div></div><div class="col" title="9 session(s) of 8 presentations"><div class="colfill" style="height:100.00%;background:#6b7f95"></div></div><div class="col" title="6 session(s) of 9 presentations"><div class="colfill" style="height:66.67%;background:#6b7f95"></div></div><div class="col" title="4 session(s) of 10 presentations"><div class="colfill" style="height:44.44%;background:#6b7f95"></div></div><div class="col" title="4 session(s) of 11 presentations"><div class="colfill" style="height:44.44%;background:#6b7f95"></div></div><div class="col" title="4 session(s) of 12 presentations"><div class="colfill" style="height:44.44%;background:#6b7f95"></div></div><div class="col" title="5 session(s) of 13 presentations"><div class="colfill" style="height:55.56%;background:#6b7f95"></div></div><div class="col" title="4 session(s) of 14 presentations"><div class="colfill" style="height:44.44%;background:#6b7f95"></div></div><div class="col" title="4 session(s) of 15 presentations"><div class="colfill" style="height:44.44%;background:#6b7f95"></div></div><div class="col" title="1 session(s) of 16 presentations"><div class="colfill" style="height:11.11%;background:#6b7f95"></div></div><div class="col" title="4 session(s) of 17 presentations"><div class="colfill" style="height:44.44%;background:#6b7f95"></div></div><div class="col" title="0 session(s) of 18 presentations"></div><div class="col" title="1 session(s) of 19 presentations"><div class="colfill" style="height:11.11%;background:#6b7f95"></div></div><div class="col" title="1 session(s) of 20 presentations"><div class="colfill" style="height:11.11%;background:#6b7f95"></div></div><div class="col" title="0 session(s) of 21 presentations"></div><div class="col" title="1 session(s) of 22 presentations"><div class="colfill" style="height:11.11%;background:#6b7f95"></div></div></div></div><div class="ticks"><div class="tick"></div><div class="tick">2</div><div class="tick"></div><div class="tick">4</div><div class="tick"></div><div class="tick">6</div><div class="tick"></div><div class="tick">8</div><div class="tick"></div><div class="tick">10</div><div class="tick"></div><div class="tick">12</div><div class="tick"></div><div class="tick">14</div><div class="tick"></div><div class="tick">16</div><div class="tick"></div><div class="tick">18</div><div class="tick"></div><div class="tick">20</div><div class="tick"></div><div class="tick">22</div></div></div><div class="chart"><div class="ch">Symposia<span class="cn">36 sessions, 4.0 presentations each on average; tallest bar is 20 sessions of 4</span></div><div class="plot" style="height:96px"><div class="cols"><div class="col" title="0 session(s) of 1 presentation"></div><div class="col" title="0 session(s) of 2 presentations"></div><div class="col" title="11 session(s) of 3 presentations"><div class="colfill" style="height:55.00%;background:#3d3d3d"></div></div><div class="col" title="20 session(s) of 4 presentations"><div class="colfill" style="height:100.00%;background:#3d3d3d"></div></div><div class="col" title="2 session(s) of 5 presentations"><div class="colfill" style="height:10.00%;background:#3d3d3d"></div></div><div class="col" title="0 session(s) of 6 presentations"></div><div class="col" title="2 session(s) of 7 presentations"><div class="colfill" style="height:10.00%;background:#3d3d3d"></div></div><div class="col" title="1 session(s) of 8 presentations"><div class="colfill" style="height:5.00%;background:#3d3d3d"></div></div></div></div><div class="ticks"><div class="tick">1</div><div class="tick">2</div><div class="tick">3</div><div class="tick">4</div><div class="tick">5</div><div class="tick">6</div><div class="tick">7</div><div class="tick">8</div></div></div></div><h2>Rooms in use</h2><p class="note">Distinct rooms occupied through each day, in 15 minute steps. A room holding several concurrent sessions counts once, so the poster hall counts as one room and these numbers are comparable with the size of the venue's room list, drawn as the dashed line.</p><div class="stack"><div class="chart"><div class="ch">Saturday 3 January<span class="cn">peak 7 rooms at 14:30</span></div><div class="plot" style="height:96px"><div class="ref" style="bottom:89.47%"><span>34 rooms</span></div><div class="cols"><div class="col" title="07:00 · 0 rooms in use"></div><div class="col" title="07:15 · 0 rooms in use"></div><div class="col" title="07:30 · 0 rooms in use"></div><div class="col" title="07:45 · 0 rooms in use"></div><div class="col" title="08:00 · 0 rooms in use"></div><div class="col" title="08:15 · 0 rooms in use"></div><div class="col" title="08:30 · 0 rooms in use"></div><div class="col" title="08:45 · 0 rooms in use"></div><div class="col" title="09:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="09:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="09:30 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="09:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="10:00 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="10:15 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="10:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="10:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="11:00 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="11:15 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="11:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="11:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="12:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="12:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="12:30 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="12:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="13:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="13:15 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="13:30 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="13:45 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="14:00 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="14:15 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="14:30 · 7 rooms in use"><div class="colfill" style="height:18.42%;background:#4a6785"></div></div><div class="col" title="14:45 · 7 rooms in use"><div class="colfill" style="height:18.42%;background:#4a6785"></div></div><div class="col" title="15:00 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="15:15 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="15:30 · 7 rooms in use"><div class="colfill" style="height:18.42%;background:#4a6785"></div></div><div class="col" title="15:45 · 7 rooms in use"><div class="colfill" style="height:18.42%;background:#4a6785"></div></div><div class="col" title="16:00 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="16:15 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="16:30 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="16:45 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="17:00 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="17:15 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="17:30 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="17:45 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="18:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="18:15 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="18:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="18:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="19:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="19:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="19:30 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="19:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="20:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="20:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="20:30 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="20:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:30 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="22:00 · 0 rooms in use"></div><div class="col" title="22:15 · 0 rooms in use"></div></div></div><div class="ticks"><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">08</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">10</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">12</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">14</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">16</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">18</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">20</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">22</div><div class="tick"></div></div></div><div class="chart"><div class="ch">Sunday 4 January<span class="cn">peak 21 rooms at 10:30</span></div><div class="plot" style="height:96px"><div class="ref" style="bottom:89.47%"><span>34 rooms</span></div><div class="cols"><div class="col" title="07:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="07:15 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="07:30 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="07:45 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="08:00 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="08:15 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="08:30 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="08:45 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="09:00 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="09:15 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="09:30 · 10 rooms in use"><div class="colfill" style="height:26.32%;background:#4a6785"></div></div><div class="col" title="09:45 · 7 rooms in use"><div class="colfill" style="height:18.42%;background:#4a6785"></div></div><div class="col" title="10:00 · 15 rooms in use"><div class="colfill" style="height:39.47%;background:#4a6785"></div></div><div class="col" title="10:15 · 15 rooms in use"><div class="colfill" style="height:39.47%;background:#4a6785"></div></div><div class="col" title="10:30 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="10:45 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="11:00 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="11:15 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="11:30 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="11:45 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="12:00 · 7 rooms in use"><div class="colfill" style="height:18.42%;background:#4a6785"></div></div><div class="col" title="12:15 · 12 rooms in use"><div class="colfill" style="height:31.58%;background:#4a6785"></div></div><div class="col" title="12:30 · 12 rooms in use"><div class="colfill" style="height:31.58%;background:#4a6785"></div></div><div class="col" title="12:45 · 12 rooms in use"><div class="colfill" style="height:31.58%;background:#4a6785"></div></div><div class="col" title="13:00 · 11 rooms in use"><div class="colfill" style="height:28.95%;background:#4a6785"></div></div><div class="col" title="13:15 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="13:30 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="13:45 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="14:00 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="14:15 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="14:30 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="14:45 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="15:00 · 15 rooms in use"><div class="colfill" style="height:39.47%;background:#4a6785"></div></div><div class="col" title="15:15 · 13 rooms in use"><div class="colfill" style="height:34.21%;background:#4a6785"></div></div><div class="col" title="15:30 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="15:45 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:00 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:15 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:30 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:45 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="17:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="17:15 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="17:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="17:45 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="18:00 · 8 rooms in use"><div class="colfill" style="height:21.05%;background:#4a6785"></div></div><div class="col" title="18:15 · 8 rooms in use"><div class="colfill" style="height:21.05%;background:#4a6785"></div></div><div class="col" title="18:30 · 8 rooms in use"><div class="colfill" style="height:21.05%;background:#4a6785"></div></div><div class="col" title="18:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="19:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="19:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="19:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="19:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="20:00 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="20:15 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="20:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="20:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="21:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:30 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="22:00 · 0 rooms in use"></div><div class="col" title="22:15 · 0 rooms in use"></div></div></div><div class="ticks"><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">08</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">10</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">12</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">14</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">16</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">18</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">20</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">22</div><div class="tick"></div></div></div><div class="chart"><div class="ch">Monday 5 January<span class="cn">peak 21 rooms at 08:45</span></div><div class="plot" style="height:96px"><div class="ref" style="bottom:89.47%"><span>34 rooms</span></div><div class="cols"><div class="col" title="07:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="07:15 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="07:30 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="07:45 · 10 rooms in use"><div class="colfill" style="height:26.32%;background:#4a6785"></div></div><div class="col" title="08:00 · 18 rooms in use"><div class="colfill" style="height:47.37%;background:#4a6785"></div></div><div class="col" title="08:15 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="08:30 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="08:45 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="09:00 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="09:15 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="09:30 · 18 rooms in use"><div class="colfill" style="height:47.37%;background:#4a6785"></div></div><div class="col" title="09:45 · 12 rooms in use"><div class="colfill" style="height:31.58%;background:#4a6785"></div></div><div class="col" title="10:00 · 12 rooms in use"><div class="colfill" style="height:31.58%;background:#4a6785"></div></div><div class="col" title="10:15 · 12 rooms in use"><div class="colfill" style="height:31.58%;background:#4a6785"></div></div><div class="col" title="10:30 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="10:45 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="11:00 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="11:15 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="11:30 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="11:45 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="12:00 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="12:15 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="12:30 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="12:45 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="13:00 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="13:15 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="13:30 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="13:45 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="14:00 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="14:15 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="14:30 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="14:45 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="15:00 · 17 rooms in use"><div class="colfill" style="height:44.74%;background:#4a6785"></div></div><div class="col" title="15:15 · 11 rooms in use"><div class="colfill" style="height:28.95%;background:#4a6785"></div></div><div class="col" title="15:30 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="15:45 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:00 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:15 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:30 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:45 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="17:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="17:15 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="17:30 · 3 rooms in use"><div class="colfill" style="height:7.89%;background:#4a6785"></div></div><div class="col" title="17:45 · 8 rooms in use"><div class="colfill" style="height:21.05%;background:#4a6785"></div></div><div class="col" title="18:00 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="18:15 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="18:30 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="18:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="19:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="19:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="19:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="19:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="20:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="20:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="20:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="20:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="21:00 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="21:15 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="21:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="21:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="22:00 · 0 rooms in use"></div><div class="col" title="22:15 · 0 rooms in use"></div></div></div><div class="ticks"><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">08</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">10</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">12</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">14</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">16</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">18</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">20</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">22</div><div class="tick"></div></div></div><div class="chart"><div class="ch">Tuesday 6 January<span class="cn">peak 22 rooms at 08:15</span></div><div class="plot" style="height:96px"><div class="ref" style="bottom:89.47%"><span>34 rooms</span></div><div class="cols"><div class="col" title="07:00 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="07:15 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="07:30 · 8 rooms in use"><div class="colfill" style="height:21.05%;background:#4a6785"></div></div><div class="col" title="07:45 · 8 rooms in use"><div class="colfill" style="height:21.05%;background:#4a6785"></div></div><div class="col" title="08:00 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="08:15 · 22 rooms in use"><div class="colfill" style="height:57.89%;background:#4a6785"></div></div><div class="col" title="08:30 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="08:45 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="09:00 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="09:15 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="09:30 · 13 rooms in use"><div class="colfill" style="height:34.21%;background:#4a6785"></div></div><div class="col" title="09:45 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="10:00 · 11 rooms in use"><div class="colfill" style="height:28.95%;background:#4a6785"></div></div><div class="col" title="10:15 · 16 rooms in use"><div class="colfill" style="height:42.11%;background:#4a6785"></div></div><div class="col" title="10:30 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="10:45 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="11:00 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="11:15 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="11:30 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="11:45 · 17 rooms in use"><div class="colfill" style="height:44.74%;background:#4a6785"></div></div><div class="col" title="12:00 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="12:15 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="12:30 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="12:45 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="13:00 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="13:15 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="13:30 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="13:45 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="14:00 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="14:15 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="14:30 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="14:45 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="15:00 · 15 rooms in use"><div class="colfill" style="height:39.47%;background:#4a6785"></div></div><div class="col" title="15:15 · 12 rooms in use"><div class="colfill" style="height:31.58%;background:#4a6785"></div></div><div class="col" title="15:30 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="15:45 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="16:00 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="16:15 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="16:30 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="16:45 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="17:00 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="17:15 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="17:30 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="17:45 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="18:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="18:15 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="18:30 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="18:45 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="19:00 · 3 rooms in use"><div class="colfill" style="height:7.89%;background:#4a6785"></div></div><div class="col" title="19:15 · 3 rooms in use"><div class="colfill" style="height:7.89%;background:#4a6785"></div></div><div class="col" title="19:30 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="19:45 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="20:00 · 3 rooms in use"><div class="colfill" style="height:7.89%;background:#4a6785"></div></div><div class="col" title="20:15 · 3 rooms in use"><div class="colfill" style="height:7.89%;background:#4a6785"></div></div><div class="col" title="20:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="20:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="21:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:30 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="21:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="22:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="22:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div></div></div><div class="ticks"><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">08</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">10</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">12</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">14</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">16</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">18</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">20</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">22</div><div class="tick"></div></div></div><div class="chart"><div class="ch">Wednesday 7 January<span class="cn">peak 21 rooms at 08:15</span></div><div class="plot" style="height:96px"><div class="ref" style="bottom:89.47%"><span>34 rooms</span></div><div class="cols"><div class="col" title="07:00 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="07:15 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="07:30 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="07:45 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="08:00 · 20 rooms in use"><div class="colfill" style="height:52.63%;background:#4a6785"></div></div><div class="col" title="08:15 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="08:30 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="08:45 · 21 rooms in use"><div class="colfill" style="height:55.26%;background:#4a6785"></div></div><div class="col" title="09:00 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="09:15 · 15 rooms in use"><div class="colfill" style="height:39.47%;background:#4a6785"></div></div><div class="col" title="09:30 · 10 rooms in use"><div class="colfill" style="height:26.32%;background:#4a6785"></div></div><div class="col" title="09:45 · 9 rooms in use"><div class="colfill" style="height:23.68%;background:#4a6785"></div></div><div class="col" title="10:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="10:15 · 10 rooms in use"><div class="colfill" style="height:26.32%;background:#4a6785"></div></div><div class="col" title="10:30 · 17 rooms in use"><div class="colfill" style="height:44.74%;background:#4a6785"></div></div><div class="col" title="10:45 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="11:00 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="11:15 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="11:30 · 19 rooms in use"><div class="colfill" style="height:50.00%;background:#4a6785"></div></div><div class="col" title="11:45 · 18 rooms in use"><div class="colfill" style="height:47.37%;background:#4a6785"></div></div><div class="col" title="12:00 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="12:15 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="12:30 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="12:45 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="13:00 · 4 rooms in use"><div class="colfill" style="height:10.53%;background:#4a6785"></div></div><div class="col" title="13:15 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="13:30 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="13:45 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="14:00 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="14:15 · 6 rooms in use"><div class="colfill" style="height:15.79%;background:#4a6785"></div></div><div class="col" title="14:30 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="14:45 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="15:00 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="15:15 · 5 rooms in use"><div class="colfill" style="height:13.16%;background:#4a6785"></div></div><div class="col" title="15:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="15:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="16:00 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="16:15 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="16:30 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="16:45 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="17:00 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="17:15 · 2 rooms in use"><div class="colfill" style="height:5.26%;background:#4a6785"></div></div><div class="col" title="17:30 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="17:45 · 1 room in use"><div class="colfill" style="height:2.63%;background:#4a6785"></div></div><div class="col" title="18:00 · 0 rooms in use"></div><div class="col" title="18:15 · 0 rooms in use"></div><div class="col" title="18:30 · 0 rooms in use"></div><div class="col" title="18:45 · 0 rooms in use"></div><div class="col" title="19:00 · 0 rooms in use"></div><div class="col" title="19:15 · 0 rooms in use"></div><div class="col" title="19:30 · 0 rooms in use"></div><div class="col" title="19:45 · 0 rooms in use"></div><div class="col" title="20:00 · 0 rooms in use"></div><div class="col" title="20:15 · 0 rooms in use"></div><div class="col" title="20:30 · 0 rooms in use"></div><div class="col" title="20:45 · 0 rooms in use"></div><div class="col" title="21:00 · 0 rooms in use"></div><div class="col" title="21:15 · 0 rooms in use"></div><div class="col" title="21:30 · 0 rooms in use"></div><div class="col" title="21:45 · 0 rooms in use"></div><div class="col" title="22:00 · 0 rooms in use"></div><div class="col" title="22:15 · 0 rooms in use"></div></div></div><div class="ticks"><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">08</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">10</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">12</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">14</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">16</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">18</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">20</div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick"></div><div class="tick">22</div><div class="tick"></div></div></div></div><footer>Generated by <code>stats_html.py</code> from the meeting exports and the contributed abstract file. Every figure is recomputed on each build.</footer></div><script>
+// The only interaction on the page: choose which similarity source the matrix shows. Talks and
+// posters are scored in separate files, so the two matrices are rendered and one is hidden.
+document.querySelectorAll('input[name=source]').forEach(function (radio) {
+  radio.addEventListener('change', function () {
+    document.querySelectorAll('.matrix').forEach(function (panel) {
+      panel.hidden = panel.dataset.source !== radio.value;
+    });
+  });
+});
+</script></body></html>

@@ -28,13 +28,26 @@ border:1px solid var(--line);border-radius:3px;padding:1px 5px;vertical-align:1p
 .card p{margin:0;font-size:13.5px;color:#444}
 .meta{margin-top:9px;font-size:11.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px}
 .meta .warn{color:#a86000;font-weight:600}
-ul.planned{list-style:none;padding:0;margin:0;display:grid;gap:8px}
-ul.planned li{border:1px dashed var(--line);border-radius:8px;padding:12px 16px;
-font-size:13.5px;color:var(--muted);background:var(--panel)}
-ul.planned b{color:#444;font-weight:600}
 footer{margin-top:44px;padding-top:14px;border-top:1px solid var(--line);
 font-size:12px;color:var(--muted)}
 code{background:var(--panel);padding:1px 5px;border-radius:3px;font-size:12.5px}
+
+/* Year selector. Every generated page lives under a folder for its meeting year, so choosing a year
+   here just repoints the cards below; the choice is remembered so a return visit opens on it. */
+.years{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 16px;
+margin-bottom:22px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+.years .lab{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+color:var(--muted)}
+.years label{display:inline-flex;align-items:center;gap:6px;font-size:15px;font-weight:600;
+cursor:pointer;user-select:none}
+.years input{margin:0;cursor:pointer}
+.years .note{font-size:12px;color:var(--muted);font-weight:400;flex:1 1 100%;margin:0}
+/* A card for a page this year does not have yet. Left in place rather than hidden, so the set of
+   pages reads the same for every year and it is obvious what is still to be built. */
+.card.absent{opacity:.5;pointer-events:none;background:var(--panel);border-style:dashed}
+.card.absent h3{color:var(--muted)}
+.card .missing{color:#a86000;font-weight:600;display:none}
+.card.absent .missing{display:inline}
 </style>
 </head>
 <body>
@@ -51,10 +64,16 @@ code{background:var(--panel);padding:1px 5px;border-radius:3px;font-size:12.5px}
   underlying exports or activity CSVs change.
 </p>
 
-<h2>Available now</h2>
+<div class="years" id="years">
+  <span class="lab">Meeting</span>
+  <noscript><p class="note">This selector needs JavaScript. The pages themselves are in a folder
+  per year, so <code>2026/schedule/index.html</code> and the rest open directly.</p></noscript>
+</div>
+
+<h2>The meeting</h2>
 
 <div class="cards">
-  <a class="card" href="schedule/index.html">
+  <a class="card" data-page="schedule">
     <h3>Schedule grid</h3>
     <p>
       Every activity at the meeting placed by room and time: symposia, contributed talk sessions,
@@ -62,14 +81,14 @@ code{background:var(--panel);padding:1px 5px;border-radius:3px;font-size:12.5px}
       division, or by activity type, and columns collapse as rooms empty out.
     </p>
     <div class="meta">
-      <span class="warn">Currently showing 2026 as a worked example</span>
+      <span class="missing">Not built for this year yet</span>
       <span>One column per room</span>
       <span>Conflict checks at the foot of the page</span>
       <span>Prints one day per page</span>
     </div>
   </a>
 
-  <a class="card" href="posters/index.html">
+  <a class="card" data-page="posters">
     <h3>Poster sessions</h3>
     <p>
       One bar per poster session, its length proportional to how many posters the session holds, so
@@ -77,9 +96,40 @@ code{background:var(--panel);padding:1px 5px;border-radius:3px;font-size:12.5px}
       because every poster session runs in the same slot. Click a bar to list its posters.
     </p>
     <div class="meta">
-      <span class="warn">Currently showing 2026 as a worked example</span>
+      <span class="missing">Not built for this year yet</span>
       <span>Sorted largest first</span>
       <span>Day totals recount as you filter</span>
+    </div>
+  </a>
+
+  <a class="card" data-page="symposia">
+    <h3>Symposia</h3>
+    <p>
+      One card per symposium, which is the one part of the meeting the other pages take apart: its
+      three blocks sit in three grid cells, its complementary sessions land on another day in another
+      room, and its complementary posters look like every other poster in the hall. Organizers, every
+      session with its room and times, the subject tags, and the talks on a click. The stacked bars at
+      the top show what each symposium brings, invited and complementary kept separate.
+    </p>
+    <div class="meta">
+      <span class="missing">Not built for this year yet</span>
+      <span>Sort by number, size, or day</span>
+      <span>Program content only, no contact details</span>
+    </div>
+  </a>
+
+  <a class="card" data-page="stats">
+    <h3>Program statistics</h3>
+    <p>
+      How much of everything there is: talks and posters per division, sessions per division with how
+      tightly each is packed, a division-by-division matrix of how alike their presentations are, the
+      spread of session sizes, and the rooms in use through each day against the size of the room
+      list. Counts only, so no individual is named.
+    </p>
+    <div class="meta">
+      <span class="missing">Not built for this year yet</span>
+      <span>Rebuilt from the exports on every run</span>
+      <span>Prints without the controls</span>
     </div>
   </a>
 </div>
@@ -112,18 +162,69 @@ code{background:var(--panel);padding:1px 5px;border-radius:3px;font-size:12.5px}
   </a>
 </div>
 
-<h2>Planned</h2>
-
-<ul class="planned">
-  <li><b>Symposium overview</b> — the accepted symposia for the cycle, their organizers, speakers, and complementary sessions.</li>
-  <li><b>Program statistics</b> — presentation and session counts by division, and how they compare with previous cycles.</li>
-</ul>
-
 <footer>
-  Generated from the tooling in <code>sicb_po</code>. Rebuild the schedule grid from
-  <code>main_schedule.ipynb</code>.
+  Generated from the tooling in <code>sicb_po</code>. Rebuild any page from
+  <code>main_schedule.ipynb</code>; each <code>publish_*</code> call writes into the folder for its
+  meeting year and refreshes <code>years.js</code>, which is what fills the selector above.
 </footer>
 
 </div>
+
+<!-- Generated. Declares window.SICB_PAGES: which pages exist for which meeting year. -->
+<script src="years.js"></script>
+<script>
+// The year selector. Cards carry a data-page name rather than an href, and choosing a year points
+// them at that year's folder. A year that has no page of a given type leaves its card in place but
+// disabled, so the set of pages reads the same whichever year is chosen.
+(function () {
+  var PAGES = window.SICB_PAGES || {};
+  var years = Object.keys(PAGES).sort().reverse();
+  var box = document.getElementById('years');
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.card[data-page]'));
+
+  if (!years.length) {
+    box.insertAdjacentHTML('beforeend', '<p class="note">No published years found. Rebuild from ' +
+      '<code>main_schedule.ipynb</code>, which writes <code>years.js</code>.</p>');
+    cards.forEach(function (card) { card.classList.add('absent'); });
+    return;
+  }
+
+  // Reopen on the year last chosen, when it is still one of the published ones.
+  var stored = null;
+  try { stored = window.localStorage.getItem('sicb-year'); } catch (e) { stored = null; }
+  var current = years.indexOf(stored) >= 0 ? stored : years[0];
+
+  years.forEach(function (year) {
+    var id = 'year-' + year;
+    box.insertAdjacentHTML('beforeend',
+      '<label for="' + id + '"><input type="radio" name="year" id="' + id + '" value="' + year +
+      '"' + (year === current ? ' checked' : '') + '>' + year + '</label>');
+  });
+  box.insertAdjacentHTML('beforeend', '<p class="note" id="yearnote"></p>');
+
+  function apply(year) {
+    cards.forEach(function (card) {
+      var page = card.dataset.page;
+      var has = (PAGES[year] || []).indexOf(page) >= 0;
+      card.classList.toggle('absent', !has);
+      if (has) {
+        card.setAttribute('href', year + '/' + page + '/index.html');
+      } else {
+        card.removeAttribute('href');
+      }
+    });
+    var built = (PAGES[year] || []).length;
+    document.getElementById('yearnote').textContent =
+      'SICB ' + year + ': ' + built + ' of ' + cards.length + ' pages built.' +
+      (built < cards.length ? ' The rest appear here once they are published.' : '');
+    try { window.localStorage.setItem('sicb-year', year); } catch (e) { /* private browsing */ }
+  }
+
+  box.addEventListener('change', function (event) {
+    if (event.target.name === 'year') apply(event.target.value);
+  });
+  apply(current);
+})();
+</script>
 </body>
 </html>
