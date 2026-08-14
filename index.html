@@ -15,6 +15,9 @@ header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:26px
 h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
 .beta{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;
 background:#4b2e83;border-radius:4px;padding:2px 7px;vertical-align:6px;margin-left:6px}
+.devbanner{background:#4b2e83;color:#fff;text-align:center;padding:7px 14px;font-size:12.5px;
+font-weight:600;letter-spacing:.02em;margin:-44px -24px 26px}
+.devbanner[hidden]{display:none}
 .card.personal{border-color:#e8a300;background:#fffdf6}
 .card.personal h3{color:#8a6100}
 .card.personal .star{color:#e8a300}
@@ -61,6 +64,7 @@ text-transform:none}
 </style>
 </head>
 <body>
+<div class="devbanner" id="devbanner" hidden>Programming mode active: pages describe an upcoming meeting still in development</div>
 <div class="wrap">
 
 <header>
@@ -85,12 +89,8 @@ text-transform:none}
 <div class="cards">
   <a class="card personal" data-personal>
     <h3><span class="star">&#9733;</span> My program</h3>
-    <p>
-      Your own shortlist of talks, posters, and sessions. Star anything on the schedule, poster, or
-      talk pages and it collects here as a personal itinerary you can read by day, print to PDF, add
-      to your calendar, or export to a spreadsheet. Saved in this browser, per meeting year, and it
-      moves between devices with the back-up file.
-    </p>
+    <p>Star talks, posters, and sessions to build a personal itinerary. Read it by day, print to PDF,
+      add to your calendar, or export to a spreadsheet. Saved in this browser, per year.</p>
     <div class="meta">
       <span class="missing">Opens once a year is published</span>
       <span>Saved in your browser</span>
@@ -100,11 +100,8 @@ text-transform:none}
 
   <a class="card" data-page="schedule">
     <h3>Schedule grid</h3>
-    <p>
-      Every activity at the meeting placed by room and time: symposia, contributed talk sessions,
-      posters, plenaries, meetings, workshops, socials, and support space. Filter by date, by
-      division, or by activity type, and columns collapse as rooms empty out.
-    </p>
+    <p>Every activity placed by room and time. Filter by date, division, or type; click a session
+      for its talks and to compare sessions by similarity.</p>
     <div class="meta">
       <span class="missing">Not built for this year yet</span>
       <span>Programmed or working data</span>
@@ -116,16 +113,9 @@ text-transform:none}
 
   <a class="card" data-page="talks">
     <h3>Contributed talk sessions</h3>
-    <p>
-      The sessions as the divisions have drafted them, in their own numbered order, from the session
-      planner rather than from the programmed schedule. So this page works from the moment abstracts
-      start being assigned, months before there is a grid to draw. Nothing here is placed: a drafted
-      session has no room, day, or time. A drafted session has no title either, so each card is
-      headed by the keywords its abstracts share. Filter by division, then click a session: it lists
-      the talks and recolours every other session by how close its science is, so a second click
-      opens the two side by side. That is how you find one session split across two numbers. The
-      data toggle switches between the draft and what the cycle was actually programmed as.
-    </p>
+    <p>The sessions as the divisions drafted them, from the session planner, so it works before the
+      schedule exists. Click one to list its talks and compare sessions by similarity; toggle between
+      the draft and the programmed result.</p>
     <div class="meta">
       <span class="missing">Not built for this year yet</span>
       <span>Working or programmed data</span>
@@ -136,11 +126,8 @@ text-transform:none}
 
   <a class="card" data-page="posters">
     <h3>Poster sessions</h3>
-    <p>
-      One bar per poster session, its length proportional to how many posters the session holds, so
-      the uneven ones are obvious at a glance. Coloured and filtered by division. Time is left out
-      because every poster session runs in the same slot. Click a bar to list its posters.
-    </p>
+    <p>One bar per poster session, its length the poster count, coloured and filtered by division.
+      Click a bar to list its posters.</p>
     <div class="meta">
       <span class="missing">Not built for this year yet</span>
       <span>Programmed or working data</span>
@@ -151,13 +138,8 @@ text-transform:none}
 
   <a class="card" data-page="symposia">
     <h3>Symposia</h3>
-    <p>
-      One card per symposium, which is the one part of the meeting the other pages take apart: its
-      three blocks sit in three grid cells, its complementary sessions land on another day in another
-      room, and its complementary posters look like every other poster in the hall. Organizers, every
-      session with its room and times, the subject tags, and the talks on a click. The stacked bars at
-      the top show what each symposium brings, invited and complementary kept separate.
-    </p>
+    <p>Each symposium reassembled whole: organizers, every session, subject tags, and the talks on a
+      click. Stacked bars show what each brings, invited and complementary kept separate.</p>
     <div class="meta">
       <span class="missing">Not built for this year yet</span>
       <span>Sort by number, size, or day</span>
@@ -167,12 +149,8 @@ text-transform:none}
 
   <a class="card" data-page="stats">
     <h3>Program statistics</h3>
-    <p>
-      How much of everything there is: talks and posters per division, sessions per division with how
-      tightly each is packed, a division-by-division matrix of how alike their presentations are, the
-      spread of session sizes, and the rooms in use through each day against the size of the room
-      list. Counts only, so no individual is named.
-    </p>
+    <p>How much of everything there is: talks and posters per division, session sizes, a
+      division-by-division similarity matrix, and rooms in use per day. Counts only, no names.</p>
     <div class="meta">
       <span class="missing">Not built for this year yet</span>
       <span>Rebuilt from the exports on every run</span>
@@ -211,6 +189,12 @@ text-transform:none}
 // them at that year's folder. A year that has no page of a given type leaves its card in place but
 // disabled, so the set of pages reads the same whichever year is chosen.
 (function () {
+  // The in-development banner shows in programming mode, from the flag years.js carries.
+  if (window.SICB_PROGRAMMING) {
+    var db = document.getElementById('devbanner');
+    if (db) db.hidden = false;
+  }
+
   var PAGES = window.SICB_PAGES || {};
   var years = Object.keys(PAGES).sort().reverse();
   var box = document.getElementById('years');

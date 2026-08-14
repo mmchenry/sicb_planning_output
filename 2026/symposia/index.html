@@ -202,10 +202,13 @@ background:#eceef1;border-radius:3px;padding:0 5px;margin-right:5px;vertical-ali
 color:#1c1c1c;border:1px solid #d0d2d8;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.18);
 padding:11px 13px;font:12px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 #pppop[hidden]{display:none}
+#pppop .pppop-x{position:absolute;top:3px;right:5px;border:0;background:none;font-size:17px;
+line-height:1;color:#999;cursor:pointer;padding:0 3px}
+#pppop .pppop-x:hover{color:#222}
 #pppop .ppk{font-size:10.5px;color:#555;margin:0 0 6px}
 #pppop .ppk b{color:#333}
 #pppop .ppa{margin:0;color:#222}
-#pppop .ppat{font-weight:700;margin:0 0 4px;font-size:12px}
+#pppop .ppat{font-weight:700;margin:0 14px 4px 0;font-size:12px}
 @media print{
   .ppbar{display:none!important}
   .ppstar,.pprm{display:none!important}
@@ -652,11 +655,10 @@ var ppPinned = null;
 function ppFill(ab) {
   var d = PP_ABSTRACTS[ab];
   if (!d) return false;
-  var html = '';
+  var html = '<button type="button" class="pppop-x" aria-label="Close">×</button>';
   if (d.t) html += '<p class="ppat">' + ppEsc(d.t) + '</p>';
   if (d.k) html += '<p class="ppk"><b>Keywords:</b> ' + ppEsc(d.k) + '</p>';
   if (d.a) html += '<p class="ppa">' + ppEsc(d.a) + '</p>';
-  if (!html) return false;
   ppPop.innerHTML = html;
   return true;
 }
@@ -676,29 +678,35 @@ function ppPlace(el) {
 function ppShow(el) {
   if (ppFill(el.dataset.ab)) ppPlace(el);
 }
-function ppHidePop() { if (!ppPinned) { ppPop.hidden = true; } }
+function ppHidePop() { ppPinned = null; ppPop.hidden = true; }
 
+// Show on hovering a title, and hide whenever the cursor is over anything that is neither a title nor
+// the popover itself. Driven by mouseover rather than mouseout, so a fast or diagonal move off the
+// title cannot leave the popover stuck open. A pinned popover (opened by a click or tap) ignores this.
 document.addEventListener('mouseover', function (e) {
   var el = e.target.closest ? e.target.closest('.ppabx[data-ab]') : null;
-  if (el && !ppPinned) ppShow(el);
+  if (el) { if (!ppPinned) ppShow(el); return; }
+  if (ppPinned) return;
+  if (ppPop.contains(e.target)) return;
+  ppPop.hidden = true;
 });
-document.addEventListener('mouseout', function (e) {
-  var el = e.target.closest ? e.target.closest('.ppabx[data-ab]') : null;
-  if (!el || ppPinned) return;
-  if (el.contains(e.relatedTarget) || ppPop.contains(e.relatedTarget)) return;
-  ppHidePop();
-});
-// Tap opens and pins the popover on a touch device, where there is no hover; a tap elsewhere closes.
+// A click on a title pins the popover open (this is also the whole interaction on a touch device); the
+// X inside it, or a click anywhere else, closes it.
 document.addEventListener('click', function (e) {
+  if (e.target.closest && e.target.closest('.pppop-x')) {
+    e.preventDefault(); e.stopPropagation(); ppHidePop(); return;
+  }
   var el = e.target.closest ? e.target.closest('.ppabx[data-ab]') : null;
   if (el) {
     e.preventDefault(); e.stopPropagation();
-    if (ppPinned === el) { ppPinned = null; ppPop.hidden = true; return; }
+    if (ppPinned === el) { ppHidePop(); return; }
     ppPinned = el; ppShow(el);
     return;
   }
-  if (ppPinned && !ppPop.contains(e.target)) { ppPinned = null; ppPop.hidden = true; }
+  if (ppPinned && !ppPop.contains(e.target)) ppHidePop();
 });
+// Escape always closes the popover.
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ppHidePop(); });
 
 // --- The itinerary ---------------------------------------------------------
 function ppRenderItinerary() {
@@ -833,16 +841,15 @@ if (ppIcsBtn) ppIcsBtn.addEventListener('click', ppCalendar);
 // The rows both share: one line per starred talk or session, in itinerary order.
 var PP_EXPORT_HEAD = ['Day', 'Start', 'End', 'Room', 'Type', 'Title', 'Presenter', 'Session',
   'Division', 'Keywords'];
-function ppExportRows() {
-  return ppProgramItems().map(function (e) {
-    var m = e.ab ? (PP_ABSTRACTS[e.ab] || {}) : {};
-    return [e.day || '', e.start || '', e.end || '', e.room || '',
-      e.type === 'session' ? 'Session' : 'Talk', ppText(e.t),
-      e.type === 'session' ? (e.count ? e.count + ' talks' : '') : (e.who || ''),
-      ppText(e.label || '') || (e.type === 'session' ? ppText(e.kind || '') : ''),
-      (e.div || '').toUpperCase(), m.k || ''];
-  });
+function ppRowOf(e) {
+  var m = e.ab ? (PP_ABSTRACTS[e.ab] || {}) : {};
+  return [e.day || '', e.start || '', e.end || '', e.room || '',
+    e.type === 'session' ? 'Session' : 'Talk', ppText(e.t),
+    e.type === 'session' ? (e.count ? e.count + ' talks' : '') : (e.who || ''),
+    ppText(e.label || '') || (e.type === 'session' ? ppText(e.kind || '') : ''),
+    (e.div || '').toUpperCase(), m.k || ''];
 }
+function ppExportRows() { return ppProgramItems().map(ppRowOf); }
 function ppCsvCell(s) {
   s = String(s == null ? '' : s);
   return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
@@ -912,9 +919,17 @@ function ppZip(files) {
   all.forEach(function (c) { out.set(c, p); p += c.length; });
   return out;
 }
+// Excel sheet names cap at 31 characters and cannot hold []:*?/\; make one safe and unique.
+function ppSheetName(label, used) {
+  var name = String(label || 'Sheet').replace(/[\[\]:*?/\\]/g, ' ').trim().slice(0, 31) || 'Sheet';
+  var base = name, n = 2;
+  while (used[name.toLowerCase()]) { name = base.slice(0, 28) + ' ' + n; n++; }
+  used[name.toLowerCase()] = 1;
+  return name;
+}
 function ppXlsx() {
-  var rows = ppExportRows();
-  if (!rows.length) { alert('Your program is empty.'); return; }
+  var items = ppProgramItems();
+  if (!items.length) { alert('Your program is empty.'); return; }
   var enc = new TextEncoder();
   function sheetRow(cells, r) {
     return '<row r="' + r + '">' + cells.map(function (v, i) {
@@ -923,19 +938,41 @@ function ppXlsx() {
         ppXmlEsc(v) + '</t></is></c>';
     }).join('') + '</row>';
   }
-  var body = [sheetRow(PP_EXPORT_HEAD, 1)]
-    .concat(rows.map(function (r, i) { return sheetRow(r, i + 2); })).join('');
-  var sheet = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
-    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
-    '<sheetData>' + body + '</sheetData></worksheet>';
+  function makeSheet(rows) {
+    var body = [sheetRow(PP_EXPORT_HEAD, 1)]
+      .concat(rows.map(function (r, i) { return sheetRow(r, i + 2); })).join('');
+    return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+      '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
+      '<sheetData>' + body + '</sheetData></worksheet>';
+  }
+
+  // One tab per meeting day, in itinerary order, so a day's programme reads on its own sheet.
+  var order = [], byDay = {};
+  items.forEach(function (e) {
+    var day = e.day || 'Not yet scheduled';
+    if (!byDay[day]) { byDay[day] = []; order.push(day); }
+    byDay[day].push(ppRowOf(e));
+  });
+
+  var used = {}, sheetFiles = [], sheetTags = [], relTags = [], ctOverrides = [];
+  order.forEach(function (day, gi) {
+    var idx = gi + 1, path = 'xl/worksheets/sheet' + idx + '.xml';
+    var name = ppSheetName(day, used);
+    sheetFiles.push({ name: path, bytes: enc.encode(makeSheet(byDay[day])) });
+    sheetTags.push('<sheet name="' + ppXmlEsc(name) + '" sheetId="' + idx + '" r:id="rId' + idx + '"/>');
+    relTags.push('<Relationship Id="rId' + idx + '" Type="http://schemas.openxmlformats.org/' +
+      'officeDocument/2006/relationships/worksheet" Target="worksheets/sheet' + idx + '.xml"/>');
+    ctOverrides.push('<Override PartName="/' + path + '" ContentType="application/vnd.' +
+      'openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>');
+  });
+
   var wb = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
     '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" ' +
     'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">' +
-    '<sheets><sheet name="My program" sheetId="1" r:id="rId1"/></sheets></workbook>';
+    '<sheets>' + sheetTags.join('') + '</sheets></workbook>';
   var wbRels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
     '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
-    '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/' +
-    'relationships/worksheet" Target="worksheets/sheet1.xml"/></Relationships>';
+    relTags.join('') + '</Relationships>';
   var rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
     '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
     '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/' +
@@ -945,16 +982,13 @@ function ppXlsx() {
     '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
     '<Default Extension="xml" ContentType="application/xml"/>' +
     '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-office' +
-    'document.spreadsheetml.sheet.main+xml"/>' +
-    '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-' +
-    'officedocument.spreadsheetml.worksheet+xml"/></Types>';
+    'document.spreadsheetml.sheet.main+xml"/>' + ctOverrides.join('') + '</Types>';
   var zip = ppZip([
     { name: '[Content_Types].xml', bytes: enc.encode(ct) },
     { name: '_rels/.rels', bytes: enc.encode(rels) },
     { name: 'xl/workbook.xml', bytes: enc.encode(wb) },
-    { name: 'xl/_rels/workbook.xml.rels', bytes: enc.encode(wbRels) },
-    { name: 'xl/worksheets/sheet1.xml', bytes: enc.encode(sheet) }
-  ]);
+    { name: 'xl/_rels/workbook.xml.rels', bytes: enc.encode(wbRels) }
+  ].concat(sheetFiles));
   var blob = new Blob([zip], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   });

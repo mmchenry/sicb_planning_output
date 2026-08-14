@@ -13,3 +13,4 @@ window.SICB_PAGES = {
     "stats"
   ]
 };
+window.SICB_PROGRAMMING = true;
