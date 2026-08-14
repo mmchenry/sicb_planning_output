@@ -517,6 +517,19 @@ function ppEsc(s) {
 // Plain text of a title, tags stripped, for the calendar and the count-free places.
 function ppText(s) { return String(s == null ? '' : s).replace(/<[^>]*>/g, ''); }
 
+// A stored 24-hour "HH:MM" shown on a 12-hour clock with AM/PM, for a session or talk read away from
+// the grid. The stored value stays 24-hour for the calendar and for sorting; this is display only.
+function pp12(t) {
+  if (!t) return '';
+  var p = String(t).split(':'), h = parseInt(p[0], 10);
+  if (isNaN(h)) return String(t);
+  return (h % 12 || 12) + ':' + (p[1] || '00') + ' ' + (h < 12 ? 'AM' : 'PM');
+}
+// A stored "HH:MM–HH:MM" range on the 12-hour clock.
+function pp12range(range) {
+  return String(range || '').split('–').map(function (s) { return pp12(s.trim()); }).join(' – ');
+}
+
 // A whole session's placement, so a session can be starred as one entry. Merged across datasets with
 // the active one winning, the same way the itinerary resolves a talk. The session id keys it; a star
 // on a session is stored as 'S:' + id, to keep it apart from a talk's abstract id.
@@ -725,7 +738,7 @@ function ppRenderItinerary() {
   items.forEach(function (e) {
     var label = e.day || 'Not yet scheduled';
     if (label !== day) { day = label; html += '<div class="ppday">' + ppEsc(day) + '</div>'; }
-    var when = e.start ? (e.end ? e.start + '\u2013' + e.end : e.start) : '';
+    var when = e.start ? (e.end ? pp12(e.start) + '\u2013' + pp12(e.end) : pp12(e.start)) : '';
     var isSession = e.type === 'session';
     var abx = (!isSession && PP_ABSTRACTS[e.ab]) ? ' ppabx' : '';
     var abattr = (!isSession && e.ab) ? ' data-ab="' + ppEsc(e.ab) + '"' : '';
@@ -843,7 +856,7 @@ var PP_EXPORT_HEAD = ['Day', 'Start', 'End', 'Room', 'Type', 'Title', 'Presenter
   'Division', 'Keywords'];
 function ppRowOf(e) {
   var m = e.ab ? (PP_ABSTRACTS[e.ab] || {}) : {};
-  return [e.day || '', e.start || '', e.end || '', e.room || '',
+  return [e.day || '', pp12(e.start), pp12(e.end), e.room || '',
     e.type === 'session' ? 'Session' : 'Talk', ppText(e.t),
     e.type === 'session' ? (e.count ? e.count + ' talks' : '') : (e.who || ''),
     ppText(e.label || '') || (e.type === 'session' ? ppText(e.kind || '') : ''),
