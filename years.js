@@ -2,7 +2,8 @@
 // Which pages exist for which meeting year; the hub builds its year selector from this.
 window.SICB_PAGES = {
   "2027": [
-    "schedule"
+    "schedule",
+    "venue"
   ],
   "2026": [
     "schedule",

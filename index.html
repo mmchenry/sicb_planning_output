@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>SICB meeting planning</title>
+<title>SICB meeting planning (Beta)</title>
 <style>
 :root{--ink:#1c1c1c;--muted:#666;--line:#e2e2e6;--panel:#f6f7f9;--accent:#2b4c7e;--bg:#fff}
 *{box-sizing:border-box}
@@ -13,6 +13,11 @@ font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .wrap{max-width:760px;margin:0 auto}
 header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:26px}
 h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+.beta{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#fff;
+background:#4b2e83;border-radius:4px;padding:2px 7px;vertical-align:6px;margin-left:6px}
+.card.personal{border-color:#e8a300;background:#fffdf6}
+.card.personal h3{color:#8a6100}
+.card.personal .star{color:#e8a300}
 .sub{color:var(--muted);font-size:13px;margin:0}
 h2{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
 margin:34px 0 12px;font-weight:700}
@@ -59,7 +64,7 @@ text-transform:none}
 <div class="wrap">
 
 <header>
-  <h1>SICB meeting planning</h1>
+  <h1>SICB meeting planning <span class="beta">Beta</span></h1>
   <p class="sub">Working pages for the Programming Committee, Society for Integrative and Comparative Biology</p>
 </header>
 
@@ -78,6 +83,21 @@ text-transform:none}
 <h2>The meeting</h2>
 
 <div class="cards">
+  <a class="card personal" data-personal>
+    <h3><span class="star">&#9733;</span> My program</h3>
+    <p>
+      Your own shortlist of talks, posters, and sessions. Star anything on the schedule, poster, or
+      talk pages and it collects here as a personal itinerary you can read by day, print to PDF, add
+      to your calendar, or export to a spreadsheet. Saved in this browser, per meeting year, and it
+      moves between devices with the back-up file.
+    </p>
+    <div class="meta">
+      <span class="missing">Opens once a year is published</span>
+      <span>Saved in your browser</span>
+      <span>PDF, calendar, and spreadsheet exports</span>
+    </div>
+  </a>
+
   <a class="card" data-page="schedule">
     <h3>Schedule grid</h3>
     <p>
@@ -159,36 +179,20 @@ text-transform:none}
       <span>Prints without the controls</span>
     </div>
   </a>
-</div>
 
-<h2>The venue <span class="onlyyear">2027 only</span></h2>
-
-<p>
-  These are the <b>2027</b> floor plans, whichever year is selected above. SICB 2027 is at the David
-  L. Lawrence Convention Center in Pittsburgh, 3 to 7 January: all meeting space is in that one
-  building, and the Westin is the room block only. Use them when you are deciding which rooms your
-  division's sessions should go in. Earlier cycles were at other venues, 2026 at the Oregon
-  Convention Center and the Hyatt Regency in Portland, so the room names on a 2026 page will not
-  appear on these plans.
-</p>
-
-<div class="cards">
-  <a class="card" href="3rd_floor.png">
-    <h3>Third floor plan <span class="tag">PNG</span></h3>
+  <a class="card" data-page="venue">
+    <h3>Venue and floor plans</h3>
     <p>
-      The floor holding most of the breakout rooms, the 300-series numbers you will be assigning
-      sessions to. Opens as an image, so it zooms in a browser tab.
+      Where the meeting is, how to get there from the headquarters hotel, and what each floor of the
+      convention center is for. The floor plans render on the page and download as one PDF. The venue
+      changes every cycle, so this page belongs to the year it describes.
     </p>
-    <div class="meta"><span>2124 &times; 1660</span><span>496 KB</span></div>
-  </a>
-
-  <a class="card" href="floor_plans.pdf">
-    <h3>Full floor plans <span class="tag">PDF</span></h3>
-    <p>
-      Every level of the convention center, with room dimensions, capacities, and the ballroom and
-      terrace spaces.
-    </p>
-    <div class="meta"><span>9 pages</span><span>1.8 MB</span></div>
+    <div class="meta">
+      <span class="missing">Not built for this year yet</span>
+      <span>Floor-by-floor purpose</span>
+      <span>Directions and a map</span>
+      <span>Floor plans as a single PDF</span>
+    </div>
   </a>
 </div>
 
@@ -211,11 +215,22 @@ text-transform:none}
   var years = Object.keys(PAGES).sort().reverse();
   var box = document.getElementById('years');
   var cards = Array.prototype.slice.call(document.querySelectorAll('.card[data-page]'));
+  var personalCard = document.querySelector('.card[data-personal]');
+
+  // A page that exists for no published year is not just absent for the current selection, it is not
+  // part of this build at all, so its card is removed rather than greyed. That is what drops the
+  // statistics card in the member view, where years.js omits stats for every year.
+  var everPages = {};
+  years.forEach(function (y) { (PAGES[y] || []).forEach(function (p) { everPages[p] = 1; }); });
+  cards.forEach(function (card) {
+    if (!everPages[card.dataset.page]) card.style.display = 'none';
+  });
 
   if (!years.length) {
     box.insertAdjacentHTML('beforeend', '<p class="note">No published years found. Rebuild from ' +
       '<code>main_schedule.ipynb</code>, which writes <code>years.js</code>.</p>');
     cards.forEach(function (card) { card.classList.add('absent'); });
+    if (personalCard) personalCard.classList.add('absent');
     return;
   }
 
@@ -243,6 +258,16 @@ text-transform:none}
         card.removeAttribute('href');
       }
     });
+    // The personal program is the schedule opened straight into its My-program view.
+    if (personalCard) {
+      var hasSchedule = (PAGES[year] || []).indexOf('schedule') >= 0;
+      personalCard.classList.toggle('absent', !hasSchedule);
+      if (hasSchedule) {
+        personalCard.setAttribute('href', year + '/schedule/index.html#myprogram');
+      } else {
+        personalCard.removeAttribute('href');
+      }
+    }
     var built = (PAGES[year] || []).length;
     var note = 'SICB ' + year + ': ';
     if (!built) {
