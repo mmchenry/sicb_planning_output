@@ -10,7 +10,8 @@ window.SICB_PAGES = {
     "talks",
     "posters",
     "symposia",
-    "stats"
+    "stats",
+    "authors"
   ]
 };
 window.SICB_PROGRAMMING = true;
