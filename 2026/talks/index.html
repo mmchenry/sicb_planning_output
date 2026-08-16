@@ -177,8 +177,6 @@ margin:18px 0 6px;padding-bottom:3px;border-bottom:1px solid #e2e2e6}
 .ppitem{display:grid;grid-template-columns:82px 1fr auto;gap:12px;align-items:baseline;
 padding:7px 4px;border-bottom:1px solid #eef0f2}
 .ppwhen{font-size:12px;color:#333;font-variant-numeric:tabular-nums}
-.ppwhen .ppt1,.ppwhen .ppt2{display:block;white-space:nowrap}
-.ppwhen .ppt2{color:#666}
 .ppwhen .pproom{display:block;color:#888;font-size:10.5px;margin-top:1px}
 /* The itinerary row's title. Named `.ppttitle` until 2026-08-15, which matched nothing: the script
    writes `pptitle`. On screen it inherited the body's 13px and looked right, and in print it inherited
@@ -283,7 +281,7 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  #detail header,#compare header{padding-left:56px}
  body.pane-left,body.pane-right,body.pane-left.pane-right{--card:220px}
 }
-</style></head><body><div class="wrap"><div class="devbanner">Upcoming meeting: this schedule is still being put together and will change</div><a class="home" href="../../index.html" title="Back to the main page"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M2 7.1 8 2.2l6 4.9v6.7H2V7.1Z"/><path d="M6.3 13.8V9.5h3.4v4.3"/></svg><span>Main</span></a><h1>SICB 2026 contributed talk sessions</h1><p class="sub"><span class="dcount" data-source="working">106 sessions · 720 presentations · 12 divisions · 16 abstracts not yet assigned · 106 sessions scored for similarity</span><span class="dcount" data-source="programmed" hidden>131 sessions · 861 presentations · 13 divisions · 114 sessions scored for similarity</span></p><div class="ppbar"><div class="ppseg" role="radiogroup" aria-label="Program view"><label class="ppopt"><input type="radio" name="ppview" value="general" checked><span>General program</span></label><label class="ppopt"><input type="radio" name="ppview" value="personal"><span>My program</span> <span class="ppn" data-role="ppcount">0</span></label></div><div class="ppexports"><button type="button" class="ppbtn ppprint" hidden>Download PDF</button><button type="button" class="ppbtn ppics" hidden>Add to calendar</button><button type="button" class="ppbtn ppxlsx" hidden>Excel (.xlsx)</button><button type="button" class="ppbtn ppcsv" hidden>CSV</button><button type="button" class="ppbtn ppexport" hidden title="Save your program to a file you can load on another device">Back up</button><button type="button" class="ppbtn ppimport" hidden title="Load a program saved from another device">Restore</button><button type="button" class="ppbtn ppclear" hidden>Clear program</button><input type="file" class="ppfile" accept="application/json,.json" hidden></div></div><div class="ppgeneral"><p class="intro">Contributed talk sessions, grouped by the division that assembled them and listed in that division's own numbered order. Nothing in the drafted view is scheduled: a drafted session has no room, day, or time until it is placed on the schedule, and no title either, so its card is headed by the keywords its abstracts share.</p><div class="panel data"><div class="ph">Data</div><div class="filters"><label class="lg"><input type="radio" name="source" value="working" checked>Draft <span class="n">the activity CSVs and the sessions the divisions have assembled</span></label><label class="lg"><input type="radio" name="source" value="programmed">Scheduled <span class="n">the meeting as it now stands, from the XCD exports</span></label></div></div><div class="panel"><div class="simkey"><span class="skhint"><b>Click a session</b> to colour every other session by how similar its science is. <b>Click a second session</b> to open the two side by side and read what is in them.</span><span class="skscale" hidden><span class="ramp"><span style="background:#fcfdbf"></span><span style="background:#feca8d"></span><span style="background:#fd9668"></span><span style="background:#f1605d"></span><span style="background:#cd4071"></span><span style="background:#9e2f7f"></span><span style="background:#6b1d81"></span><span style="background:#3b0f70"></span><span style="background:#1c1044"></span></span><span class="sklo" data-role="lo"></span><span class="skhi" data-role="hi"></span><button class="skclear" type="button">clear</button></span><span class="nokey" hidden>no similarity data for this view; needs <code>talks_similarity.csv</code></span></div></div><div class="panel"><div class="ph">Divisions<span class="acts"><button data-all>all</button><button data-none>none</button></span></div><div class="filters"><label class="lg"><input type="checkbox" checked data-div="dab"><span class="sw" style="background:#9c2f2f"></span>DAB <span class="n">Animal Behavior <span class="num" data-n-working="12" data-n-programmed="13">12</span> sessions, <span class="num" data-n-working="77" data-n-programmed="85">77</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dcb"><span class="sw" style="background:#2b4c7e"></span>DCB <span class="n">Comparative Biomechanics <span class="num" data-n-working="17" data-n-programmed="19">17</span> sessions, <span class="num" data-n-working="123" data-n-programmed="129">123</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dce"><span class="sw" style="background:#7b2d5e"></span>DCE <span class="n">Comparative Endocrinology <span class="num" data-n-working="4" data-n-programmed="6">4</span> sessions, <span class="num" data-n-working="27" data-n-programmed="39">27</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dcpb"><span class="sw" style="background:#1f6f6f"></span>DCPB <span class="n">Comparative Physiology &amp; Biochemistry <span class="num" data-n-working="7" data-n-programmed="10">7</span> sessions, <span class="num" data-n-working="45" data-n-programmed="66">45</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dedb"><span class="sw" style="background:#6a4c93"></span>DEDB <span class="n">Evolutionary Developmental Biology <span class="num" data-n-working="4" data-n-programmed="6">4</span> sessions, <span class="num" data-n-working="23" data-n-programmed="35">23</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dede"><span class="sw" style="background:#8a6d1f"></span>DEDE <span class="n">Ecoimmunology and Disease Ecology <span class="num" data-n-working="5" data-n-programmed="5">5</span> sessions, <span class="num" data-n-working="35" data-n-programmed="36">35</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dee"><span class="sw" style="background:#2f7d4f"></span>DEE <span class="n">Ecology &amp; Evolution <span class="num" data-n-working="26" data-n-programmed="29">26</span> sessions, <span class="num" data-n-working="184" data-n-programmed="194">184</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="diz"><span class="sw" style="background:#1f6fa8"></span>DIZ <span class="n">Invertebrate Zoology <span class="num" data-n-working="5" data-n-programmed="9">5</span> sessions, <span class="num" data-n-working="31" data-n-programmed="58">31</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dnnsb"><span class="sw" style="background:#b03a6a"></span>DNNSB <span class="n">Neurobiology, Neuroethology, and Sensory Biology <span class="num" data-n-working="7" data-n-programmed="10">7</span> sessions, <span class="num" data-n-working="50" data-n-programmed="68">50</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dpcb"><span class="sw" style="background:#4c5b9e"></span>DPCB <span class="n">Phylogenetics and Comparative Biology <span class="num" data-n-working="5" data-n-programmed="6">5</span> sessions, <span class="num" data-n-working="31" data-n-programmed="38">31</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dvm"><span class="sw" style="background:#c1651c"></span>DVM <span class="n">Vertebrate Morphology <span class="num" data-n-working="12" data-n-programmed="14">12</span> sessions, <span class="num" data-n-working="81" data-n-programmed="96">81</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="edu"><span class="sw" style="background:#6b4f2a"></span>EDU <span class="n">Outreach, Education, and Policy <span class="num" data-n-working="2" data-n-programmed="2">2</span> sessions, <span class="num" data-n-working="13" data-n-programmed="13">13</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div=""><span class="sw" style="background:#8c8c8c"></span>none <span class="n">no division resolved <span class="num" data-n-working="0" data-n-programmed="2">0</span> sessions, <span class="num" data-n-working="0" data-n-programmed="4">0</span> talks</span></label></div></div><div class="panel search"><div class="ph">Search<span class="phn">presenter, author, affiliation, or words in a title</span></div><div class="srow"><span class="sbox"><input type="search" id="q" placeholder="a presenter, an author, or words from a talk title" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="q" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="scount" data-role="scount"></span><span class="snav" hidden><button type="button" data-step="-1" title="Previous match">&#8249;</button><button type="button" data-step="1" title="Next match">&#8250;</button></span></div><div class="srow idrow"><label class="idlab" for="qid">Talk ID</label><span class="sbox idbox"><input type="search" id="qid" placeholder="e.g. 549" inputmode="numeric" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="qid" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="idmsg" data-role="idmsg"></span></div></div><div class="dataset" data-source="working"><section class="divblock" data-div="dab"><h2><span class="ab" style="background:#9c2f2f">DAB</span>Animal Behavior<span class="dn">12 sessions · 77 talks</span></h2><div class="cards"><div class="card" data-id="dab-t1" data-div="dab" data-base="#9c2f2f" style="background:#9c2f2f" data-find="migration, aquatic, biogeography, predator-prey interactions dab 1 dab migration aquatic biogeography predator-prey interactions" title="DAB 1 · Animal Behavior
+</style></head><body><div class="wrap"><div class="devbanner">Upcoming meeting: this schedule is still being put together and will change</div><a class="home" href="../../index.html" title="Back to the main page"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M2 7.1 8 2.2l6 4.9v6.7H2V7.1Z"/><path d="M6.3 13.8V9.5h3.4v4.3"/></svg><span>Main</span></a><h1>SICB 2026 contributed talk sessions</h1><p class="sub"><span class="dcount" data-source="working">106 sessions · 720 presentations · 12 divisions · 16 abstracts not yet assigned · 106 sessions scored for similarity</span><span class="dcount" data-source="programmed" hidden>131 sessions · 861 presentations · 13 divisions · 114 sessions scored for similarity</span></p><div class="ppbar"><div class="ppseg" role="radiogroup" aria-label="Program view"><label class="ppopt"><input type="radio" name="ppview" value="general" checked><span>General program</span></label><label class="ppopt"><input type="radio" name="ppview" value="personal"><span>My program</span> <span class="ppn" data-role="ppcount">0</span></label></div><div class="ppexports"><button type="button" class="ppbtn ppprint" hidden>Download PDF</button><button type="button" class="ppbtn ppics" hidden>Add to calendar</button><button type="button" class="ppbtn ppxlsx" hidden>Excel (.xlsx)</button><button type="button" class="ppbtn ppcsv" hidden>CSV</button><button type="button" class="ppbtn ppexport" hidden title="Save your program to a file you can load on another device">Back up</button><button type="button" class="ppbtn ppimport" hidden title="Load a program saved from another device">Restore</button><button type="button" class="ppbtn ppclear" hidden>Clear program</button><input type="file" class="ppfile" accept="application/json,.json" hidden></div><p class="ppnote" data-role="ppnote" hidden></p></div><div class="ppgeneral"><p class="intro">Contributed talk sessions, grouped by the division that assembled them and listed in that division's own numbered order. Nothing in the drafted view is scheduled: a drafted session has no room, day, or time until it is placed on the schedule, and no title either, so its card is headed by the keywords its abstracts share.</p><div class="panel data"><div class="ph">Data</div><div class="filters"><label class="lg"><input type="radio" name="source" value="working" checked>Working <span class="n">from the activity CSVs and the drafted sessions, during planning</span></label><label class="lg"><input type="radio" name="source" value="programmed">Programmed <span class="n">from the XCD exports, after the meeting has been built</span></label></div></div><div class="panel"><div class="simkey"><span class="skhint"><b>Click a session</b> to colour every other session by how similar its science is. <b>Click a second session</b> to open the two side by side and read what is in them.</span><span class="skscale" hidden><span class="ramp"><span style="background:#fcfdbf"></span><span style="background:#feca8d"></span><span style="background:#fd9668"></span><span style="background:#f1605d"></span><span style="background:#cd4071"></span><span style="background:#9e2f7f"></span><span style="background:#6b1d81"></span><span style="background:#3b0f70"></span><span style="background:#1c1044"></span></span><span class="sklo" data-role="lo"></span><span class="skhi" data-role="hi"></span><button class="skclear" type="button">clear</button></span><span class="nokey" hidden>no similarity data for this view; needs <code>talks_similarity.csv</code></span></div></div><div class="panel"><div class="ph">Divisions<span class="acts"><button data-all>all</button><button data-none>none</button></span></div><div class="filters"><label class="lg"><input type="checkbox" checked data-div="dab"><span class="sw" style="background:#9c2f2f"></span>DAB <span class="n">Animal Behavior <span class="num" data-n-working="12" data-n-programmed="13">12</span> sessions, <span class="num" data-n-working="77" data-n-programmed="85">77</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dcb"><span class="sw" style="background:#2b4c7e"></span>DCB <span class="n">Comparative Biomechanics <span class="num" data-n-working="17" data-n-programmed="19">17</span> sessions, <span class="num" data-n-working="123" data-n-programmed="129">123</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dce"><span class="sw" style="background:#7b2d5e"></span>DCE <span class="n">Comparative Endocrinology <span class="num" data-n-working="4" data-n-programmed="6">4</span> sessions, <span class="num" data-n-working="27" data-n-programmed="39">27</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dcpb"><span class="sw" style="background:#1f6f6f"></span>DCPB <span class="n">Comparative Physiology &amp; Biochemistry <span class="num" data-n-working="7" data-n-programmed="10">7</span> sessions, <span class="num" data-n-working="45" data-n-programmed="66">45</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dedb"><span class="sw" style="background:#6a4c93"></span>DEDB <span class="n">Evolutionary Developmental Biology <span class="num" data-n-working="4" data-n-programmed="6">4</span> sessions, <span class="num" data-n-working="23" data-n-programmed="35">23</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dede"><span class="sw" style="background:#8a6d1f"></span>DEDE <span class="n">Ecoimmunology and Disease Ecology <span class="num" data-n-working="5" data-n-programmed="5">5</span> sessions, <span class="num" data-n-working="35" data-n-programmed="36">35</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dee"><span class="sw" style="background:#2f7d4f"></span>DEE <span class="n">Ecology &amp; Evolution <span class="num" data-n-working="26" data-n-programmed="29">26</span> sessions, <span class="num" data-n-working="184" data-n-programmed="194">184</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="diz"><span class="sw" style="background:#1f6fa8"></span>DIZ <span class="n">Invertebrate Zoology <span class="num" data-n-working="5" data-n-programmed="9">5</span> sessions, <span class="num" data-n-working="31" data-n-programmed="58">31</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dnnsb"><span class="sw" style="background:#b03a6a"></span>DNNSB <span class="n">Neurobiology, Neuroethology, and Sensory Biology <span class="num" data-n-working="7" data-n-programmed="10">7</span> sessions, <span class="num" data-n-working="50" data-n-programmed="68">50</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dpcb"><span class="sw" style="background:#4c5b9e"></span>DPCB <span class="n">Phylogenetics and Comparative Biology <span class="num" data-n-working="5" data-n-programmed="6">5</span> sessions, <span class="num" data-n-working="31" data-n-programmed="38">31</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dvm"><span class="sw" style="background:#c1651c"></span>DVM <span class="n">Vertebrate Morphology <span class="num" data-n-working="12" data-n-programmed="14">12</span> sessions, <span class="num" data-n-working="81" data-n-programmed="96">81</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="edu"><span class="sw" style="background:#6b4f2a"></span>EDU <span class="n">Outreach, Education, and Policy <span class="num" data-n-working="2" data-n-programmed="2">2</span> sessions, <span class="num" data-n-working="13" data-n-programmed="13">13</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div=""><span class="sw" style="background:#8c8c8c"></span>none <span class="n">no division resolved <span class="num" data-n-working="0" data-n-programmed="2">0</span> sessions, <span class="num" data-n-working="0" data-n-programmed="4">0</span> talks</span></label></div></div><div class="panel search"><div class="ph">Search<span class="phn">presenter, author, affiliation, or words in a title</span></div><div class="srow"><span class="sbox"><input type="search" id="q" placeholder="a presenter, an author, or words from a talk title" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="q" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="scount" data-role="scount"></span><span class="snav" hidden><button type="button" data-step="-1" title="Previous match">&#8249;</button><button type="button" data-step="1" title="Next match">&#8250;</button></span></div><div class="srow idrow"><label class="idlab" for="qid">Talk ID</label><span class="sbox idbox"><input type="search" id="qid" placeholder="e.g. 549" inputmode="numeric" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="qid" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="idmsg" data-role="idmsg"></span></div></div><div class="dataset" data-source="working"><section class="divblock" data-div="dab"><h2><span class="ab" style="background:#9c2f2f">DAB</span>Animal Behavior<span class="dn">12 sessions · 77 talks</span></h2><div class="cards"><div class="card" data-id="dab-t1" data-div="dab" data-base="#9c2f2f" style="background:#9c2f2f" data-find="migration, aquatic, biogeography, predator-prey interactions dab 1 dab migration aquatic biogeography predator-prey interactions" title="DAB 1 · Animal Behavior
 7 presentations
 Shared keywords: migration, aquatic, biogeography, predator-prey interactions
 Click to list the presentations"><div class="ct"><button type="button" class="ppstar ppsess" data-sess="dab-t1" aria-pressed="false" title="Add this whole session to my program" aria-label="Add session to my program">☆</button> migration, aquatic, biogeography, predator-prey interactions</div><div class="cm"><b>DAB 1</b> · 7 talks</div></div><div class="card" data-id="dab-t2" data-div="dab" data-base="#9c2f2f" style="background:#9c2f2f" data-find="parental care, birds, developmental plasticity, marine invertebrates dab 2 dab parental care birds developmental plasticity marine invertebrates" title="DAB 2 · Animal Behavior
@@ -1064,12 +1062,15 @@ function fill(panel, id, sim) {
   var rows = s.items.map(function (p, i) {
     // The drafted source knows each abstract's division, the programmed one knows the institution.
     var who = [p.who, p.div || p.aff].filter(Boolean).join(' · ');
+    // Who else wrote it, the same line the personal programme carries.
+    var authors = ppCoauthors(p.ab, p.who);
     var abx = (p.ab && ppHasAbs(p.ab)) ? ' ppabx' : '';
     var abattr = p.ab ? ' data-ab="' + esc(p.ab) + '"' : '';
     return '<li' + hitAttr(id, i) + '><div class="ps">' + (p.n ? p.n + '.' : '') +
       ' ' + ppStarBtn(p.ab) + '</div>' +
       '<div class="pt' + abx + '"' + abattr + '>' + (p.ab ? esc(p.ab) + ': ' : '') + p.t + '</div>' +
-      (who ? '<div class="pw">' + esc(who) + '</div>' : '') + '</li>';
+      (who ? '<div class="pw">' + esc(who) + '</div>' : '') +
+      (authors ? '<div class="ppau">' + esc(authors) + '</div>' : '') + '</li>';
   }).join('');
   panel.innerHTML =
     '<header><button class="pclose" aria-label="Close" title="Close and clear selection">×</button>' +
@@ -1080,8 +1081,9 @@ function fill(panel, id, sim) {
     (s.keywords.length ? '<div class="kw">' + esc(s.keywords.join(' · ')) + '</div>' : '') +
     '</header><div class="body"><ol>' + rows + '</ol></div>';
   panel.querySelector('.pclose').addEventListener('click', function () {
-    closePanel(panel);
-    clearReference();
+    // The compare pane (left) closes on its own, keeping the reference selected; the reference pane
+    // (right) clears the reference and returns the page to plain browsing.
+    if (panel === compare) { closePanel(compare); } else { clearReference(); }
   });
   panel.classList.add('on');
   updateChrome();
@@ -1406,11 +1408,20 @@ document.querySelectorAll('.acts button').forEach(function (b) {
   b.addEventListener('click', function () { setTimeout(ppfSave, 0); });
 });
 
-if (ppfRestore()) {
+// Run the page's own filters, so what is on screen always describes the boxes as they now stand.
+function ppfApply() {
   if (typeof applyFilters === 'function') applyFilters();
   if (typeof applyDayFilter === 'function') applyDayFilter();
   if (typeof refreshSearch === 'function') refreshSearch();
 }
+
+ppfRestore();
+ppfApply();
+// A back-navigation restores the page from the cache with its form state intact and no script re-run,
+// so the boxes can come back unchecked over an unfiltered page unless this runs again.
+window.addEventListener('pageshow', function (e) {
+  if (e.persisted) { ppfRestore(); ppfApply(); }
+});
 window.PP_PAYLOADS = PAYLOADS;
 window.PP_SESSIONS = JSON.parse(document.getElementById('session-index').textContent);
 
@@ -1418,6 +1429,17 @@ window.PP_SESSIONS = JSON.parse(document.getElementById('session-index').textCon
 var PP_YEAR = '2026';
 var PP_MEETING = '2026';
 var PP_STARKEY = 'sicb-stars-' + PP_YEAR;
+// Where a starred item sits, remembered beside the stars themselves.
+//
+// The itinerary reads placement from the page it is opened on, and no page knows the whole meeting:
+// the poster page holds posters and not talks, the talk sessions page holds no times at all, and the
+// grid leaves poster abstracts out of its payload on purpose. So the same star read from two pages
+// used to give two different answers, one of them "Not yet scheduled". Whatever a page does know is
+// written here as it is read, and any page can then place a star that its own data cannot.
+//
+// The page's own data always wins where it has any, so this is a fallback and never a cache to go
+// stale in front of fresher data.
+var PP_PLACEKEY = 'sicb-place-' + PP_YEAR;
 var PP_ABSTRACTS = (function () {
   var el = document.getElementById('abstract-data');
   try { return el ? JSON.parse(el.textContent) : {}; } catch (e) { return {}; }
@@ -1432,6 +1454,29 @@ function ppSave() {
 }
 var PP_STARS = ppLoad();
 
+function ppPlaceLoad() {
+  try { return JSON.parse(localStorage.getItem(PP_PLACEKEY) || '{}') || {}; }
+  catch (e) { return {}; }
+}
+function ppPlaceSave(store) {
+  try { localStorage.setItem(PP_PLACEKEY, JSON.stringify(store)); } catch (e) { /* private mode */ }
+}
+// Whether a record says where something is. A page can know a presentation's title and presenter and
+// still know nothing about when it runs, which is the talk sessions page's whole situation.
+function ppIsPlaced(e) {
+  return !!(e && (e.iso || e.start || e.room));
+}
+// How completely a record places something, so two of them can be compared rather than merely tested.
+// A day and somewhere to be beats a bare time, which is what a drafted session carries: its talks are
+// numbered into slots that have no date and no room yet, and that must not outrank the real schedule.
+function ppPlaceRank(e) {
+  if (!e) return 0;
+  if (e.iso && (e.room || e.start)) return 3;
+  if (e.iso) return 2;
+  if (e.room || e.start) return 1;
+  return 0;
+}
+
 // Which dataset the reader is looking at, so the itinerary and the exports describe the view on show.
 // A page with a DATA toggle keeps a global `source`; a single-source page has none, so fall back.
 function ppSource() {
@@ -1444,26 +1489,40 @@ function ppSource() {
 // shape sets `window.PP_PAYLOADS`; a page with its own shape sets `window.PP_PLACEMENTS`.
 function ppPlacements() {
   if (typeof window.PP_PLACEMENTS === 'function') return window.PP_PLACEMENTS();
-  var out = [];
-  var pay = (window.PP_PAYLOADS && window.PP_PAYLOADS[ppSource()]) || {};
-  Object.keys(pay).forEach(function (id) {
-    var s = pay[id];
-    // A presentation with no time of its own falls back to its session's slot. Posters have no
-    // individual time and never will — a poster is up for the whole session — so without this every
-    // starred poster printed with a dash where its time should be, and none of them reached a calendar.
-    var span = String(s.span || '').split('–');
-    var from = (span[0] || '').trim(), to = (span[1] || '').trim();
-    (s.items || []).forEach(function (p) {
-      if (p.ab == null || p.ab === '') return;
-      out.push({
-        ab: String(p.ab), t: p.t || '', who: p.who || '', aff: p.aff || '',
-        iso: s.iso || '', day: s.day || '', start: p.s || from, end: p.e || to,
-        room: s.room || '', label: s.title || '', div: s.division || '', kind: s.kind || '',
-        order: p.n || 0
+  var all = window.PP_PAYLOADS || {};
+  var map = {};
+  // Every dataset the page carries, the one on show first. A page can hold a drafted view with no
+  // times beside a scheduled one that has them, and a starred talk should be placed from whichever
+  // knows where it is: the itinerary is a reader's own programme, not a description of the toggle.
+  [ppSource()].concat(Object.keys(all)).forEach(function (src) {
+    var pay = all[src] || {};
+    Object.keys(pay).forEach(function (id) {
+      var s = pay[id];
+      // A presentation with no time of its own falls back to its session's slot. Posters have no
+      // individual time and never will — a poster is up for the whole session — so without this every
+      // starred poster printed with a dash where its time should be, and none reached a calendar.
+      var span = String(s.span || '').split('–');
+      var from = (span[0] || '').trim(), to = (span[1] || '').trim();
+      (s.items || []).forEach(function (p) {
+        if (p.ab == null || p.ab === '') return;
+        var ab = String(p.ab);
+        var here = {
+          ab: ab, t: p.t || '', who: p.who || '', aff: p.aff || '',
+          iso: s.iso || '', day: s.day || '', start: p.s || from, end: p.e || to,
+          room: s.room || '', label: s.title || '', div: s.division || '', kind: s.kind || '',
+          order: p.n || 0
+        };
+        if (!map[ab]) { map[ab] = here; return; }
+        // The dataset on show owns the text; a later one only wins where it places the talk better.
+        if (ppPlaceRank(here) > ppPlaceRank(map[ab])) {
+          map[ab] = Object.assign({}, here, {
+            t: map[ab].t || here.t, who: map[ab].who || here.who, aff: map[ab].aff || here.aff
+          });
+        }
       });
     });
   });
-  return out;
+  return Object.keys(map).map(function (ab) { return map[ab]; });
 }
 
 function ppEsc(s) {
@@ -1524,28 +1583,67 @@ function ppSessions() {
 
 // Every starred entry, a whole session or a single talk, resolved to placement and sorted for the
 // itinerary and every export. One list, so the four outputs cannot disagree.
-function ppProgramItems() {
-  var place = {};
-  ppPlacements().forEach(function (e) { if (!place[e.ab]) place[e.ab] = e; });
+// What this page knows about a starred key, merged with what an earlier page knew.
+//
+// The page's own record wins outright when it carries placement; when it does not, the remembered one
+// is used and the page's record only fills in the text. Anything the page can place is written back,
+// so a talk starred on the grid is placed on the poster page ever after, and a poster starred on the
+// poster page is placed on the grid.
+function ppResolve() {
+  var page = {};
+  ppPlacements().forEach(function (e) { if (!page[e.ab]) page[e.ab] = e; });
   var sess = ppSessions();
+  Object.keys(sess).forEach(function (id) {
+    var key = ppSessionKey(id);
+    if (!page[key]) page[key] = sess[id];
+  });
+
+  var store = ppPlaceLoad(), changed = false;
+  var out = {};
+  PP_STARS.forEach(function (key) {
+    var mine = page[key], kept = store[key];
+    if (ppIsPlaced(mine) && ppPlaceRank(mine) >= ppPlaceRank(kept)) {
+      out[key] = mine;
+      if (JSON.stringify(store[key]) !== JSON.stringify(mine)) { store[key] = mine; changed = true; }
+    } else if (ppIsPlaced(kept)) {
+      // Keep the remembered placement, but take the text from this page where it has it: a title
+      // corrected in a later export should not be held back by an older record.
+      out[key] = mine ? Object.assign({}, kept, {
+        t: mine.t || kept.t, who: mine.who || kept.who, aff: mine.aff || kept.aff
+      }) : kept;
+    } else {
+      out[key] = mine || kept || null;
+    }
+  });
+  if (changed) ppPlaceSave(store);
+  return out;
+}
+
+// Record what this page knows, without rendering anything. Called when a star is clicked, so a talk
+// starred on the grid is remembered even by a reader who never opens My program there.
+function ppRemember() { ppResolve(); }
+
+function ppProgramItems() {
+  var known = ppResolve();
   var items = [];
   PP_STARS.forEach(function (key) {
     if (key.indexOf('S:') === 0) {
       var id = key.slice(2);
-      var s = sess[id];
+      var s = known[key];
       items.push(s
-        ? { type: 'session', key: key, id: id, t: s.t, who: '', iso: s.iso, day: s.day,
-            start: s.start, end: s.end, room: s.room, label: '', div: s.div, kind: s.kind,
-            count: s.count, order: -1 }
+        ? { type: 'session', key: key, id: id, t: s.t, who: '', iso: s.iso || '', day: s.day || '',
+            start: s.start || '', end: s.end || '', room: s.room || '', label: '', div: s.div || '',
+            kind: s.kind || '', count: s.count || 0, order: -1 }
         : { type: 'session', key: key, id: id, t: 'Session ' + id, who: '', iso: '', day: '',
             start: '', end: '', room: '', label: '', div: '', kind: '', count: 0, order: -1 });
       return;
     }
-    var e = place[key];
+    var e = known[key];
     if (e) {
-      items.push({ type: 'talk', key: key, ab: key, t: e.t, who: e.who, aff: e.aff || '',
-        iso: e.iso, day: e.day, start: e.start, end: e.end, room: e.room, label: e.label,
-        div: e.div, kind: e.kind, order: e.order || 0 });
+      items.push({ type: 'talk', key: key, ab: key, t: e.t, who: e.who || '', aff: e.aff || '',
+        iso: e.iso || '', day: e.day || '', start: e.start || '', end: e.end || '',
+        room: e.room || '', label: e.label || '', div: e.div || '', kind: e.kind || '',
+        order: e.order || 0 });
     } else {
       var m = PP_ABSTRACTS[key] || {};
       items.push({ type: 'talk', key: key, ab: key, t: m.t || ('Abstract ' + key), who: '',
@@ -1610,6 +1708,8 @@ document.addEventListener('click', function (e) {
   if (!key) return;
   if (PP_STARS.has(key)) PP_STARS.delete(key); else PP_STARS.add(key);
   ppSave(); ppPaint(); ppCount();
+  // Record where this page says the starred item sits, so another page can place it later.
+  ppRemember();
   if (document.body.classList.contains('pp-personal')) ppRenderItinerary();
 });
 
@@ -1678,11 +1778,24 @@ document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ppHi
 
 // --- The itinerary ---------------------------------------------------------
 
+// How many presentations a starred session holds, in its own noun: a poster session holds posters.
+function ppCountLabel(e) {
+  var noun = /poster/i.test(String(e.kind || '')) ? 'poster' : 'talk';
+  return e.count + ' ' + noun + (e.count === 1 ? '' : 's');
+}
+
 // The badge on a row's title. A whole session says so; a poster says so, because it is the one thing
 // about an entry that changes how a reader gets to it. Everything else takes no badge: a division
 // abbreviation on a personal programme is the Program Officer's filing, not the reader's business.
 function ppKindTag(kind) {
   return /poster/i.test(String(kind || '')) ? 'Poster' : '';
+}
+
+// The other authors of one presentation, from the abstract island's author list, for a lineup row in
+// a session pane. Same rule as the itinerary line below, and the same reason: the presenter is already
+// on the line above.
+function ppCoauthors(ab, who) {
+  return ppAuthorLine({ ab: ab, who: who });
 }
 
 // The other authors of a starred talk, from the abstract island's author list. Names only, with no
@@ -1777,7 +1890,13 @@ function ppSetView(v) {
     else if (typeof closeAll === 'function') closeAll();
     ppCount();
     ppRenderItinerary();
+  } else if (typeof ppfApply === 'function') {
+    // Coming back to the general program, re-run its filters. The checkboxes are the standing
+    // description of what should be on show, and this is the one place a reader looks away from the
+    // page and back at it, so it is where a page showing more than the boxes say gets noticed.
+    ppfApply();
   }
+  ppSaid('');
   ppPinned = null; ppPop.hidden = true;
 }
 document.querySelectorAll('input[name=ppview]').forEach(function (r) {
@@ -1826,6 +1945,14 @@ function ppIcsFold(line) {
   out.push(cur);
   return out.join('\r\n');
 }
+// One line under the export buttons, saying what was written and where it went. Cleared when the
+// reader switches view, so it never reads as a description of something they are looking at now.
+function ppSaid(message) {
+  var note = document.querySelector('[data-role=ppnote]');
+  if (!note) return;
+  note.textContent = message || '';
+  note.hidden = !message;
+}
 function ppDownload(name, text, type) {
   var blob = new Blob([text], { type: type + ';charset=utf-8' });
   var url = URL.createObjectURL(blob);
@@ -1833,7 +1960,9 @@ function ppDownload(name, text, type) {
   a.href = url; a.download = name;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a);
-  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  // Held for a minute rather than a second: on a phone the file goes through a save or share sheet
+  // that is still reading the blob long after the click returns.
+  setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
 }
 // The calendar file. Deliberately plain: one VEVENT per starred item, no timezone component and no
 // alarms.
@@ -1858,7 +1987,15 @@ function ppCalendar() {
     if (!e.iso) return;              // an event needs at least a date
     var d = e.iso.replace(/-/g, '');
     lines.push('BEGIN:VEVENT');
-    lines.push('UID:sicb-' + PP_MEETING + '-' + e.key.replace(/[^A-Za-z0-9]/g, '') + '@sicb.org');
+    // The UID carries the moment of export, so every download is a fresh set of events.
+    //
+    // A stable UID is the tidier thing and it is what an updating feed wants, but this is a file a
+    // reader downloads again after starring more talks, and a client that has seen a UID before will
+    // quietly update the event it already has — including one the reader deleted, which it may drop
+    // on the floor instead. That failure is invisible: the import reports success and nothing appears.
+    // A duplicate, by contrast, is visible and can be deleted.
+    lines.push('UID:sicb-' + PP_MEETING + '-' + e.key.replace(/[^A-Za-z0-9]/g, '') +
+      '-' + stamp + '@sicb.org');
     lines.push('DTSTAMP:' + stamp);
     lines.push('SEQUENCE:0');
     if (e.start) {
@@ -1873,7 +2010,7 @@ function ppCalendar() {
     lines.push('SUMMARY:' + ppIcsEsc(ppText(e.t)));
     if (e.room) lines.push('LOCATION:' + ppIcsEsc(e.room));
     var desc = [];
-    if (e.type === 'session' && e.count) desc.push(e.count + ' talks');
+    if (e.type === 'session' && e.count) desc.push(ppCountLabel(e));
     if (e.who) desc.push([e.who, e.aff].filter(Boolean).join(' \u00b7 '));
     var authors = e.type === 'session' ? '' : ppAuthorLine(e);
     if (authors) desc.push(authors);
@@ -1891,6 +2028,16 @@ function ppCalendar() {
   // kind a strict parser rejects, and the events silently never arrive.
   var ics = lines.map(ppIcsFold).join('\r\n') + '\r\n';
   ppDownload('SICB-' + PP_MEETING + '-my-program.ics', ics, 'text/calendar');
+  // Where to look afterwards, in both senses: which folder the file went to, and which month the
+  // events are in. A meeting is months away, so a calendar opened on today shows nothing either way.
+  var first = ppProgramItems().filter(function (e) { return e.iso; })[0];
+  var month = first
+    ? new Date(first.iso + 'T00:00:00').toLocaleDateString(undefined,
+        { month: 'long', year: 'numeric' })
+    : 'the meeting';
+  ppSaid(n + (n === 1 ? ' event' : ' events') + ' written to a calendar file, saved with your ' +
+    'downloads. Open it there and choose Add All; the events go into your default calendar, in ' +
+    month + '.');
 }
 var ppIcsBtn = document.querySelector('.ppics');
 if (ppIcsBtn) ppIcsBtn.addEventListener('click', ppCalendar);
@@ -1906,7 +2053,7 @@ function ppRowOf(e) {
   var m = e.ab ? (PP_ABSTRACTS[e.ab] || {}) : {};
   return [e.day || '', pp12(e.start), pp12(e.end), e.room || '',
     e.type === 'session' ? 'Session' : 'Talk', ppText(e.t),
-    e.type === 'session' ? (e.count ? e.count + ' talks' : '') : (e.who || ''),
+    e.type === 'session' ? (e.count ? ppCountLabel(e) : '') : (e.who || ''),
     e.type === 'session' ? '' : (e.aff || ''),
     e.type === 'session' ? '' : ppAuthorLine(e),
     m.k || ''];
@@ -2128,6 +2275,10 @@ document.querySelectorAll('.ppt[data-ab]').forEach(function (el) {
 // Initial paint of any stars already on the page, and the count.
 ppPaint();
 ppCount();
+// Record where this page says the reader's existing stars sit, without waiting for them to open My
+// program here. A reader who starred a dozen talks on the grid months ago has them placed everywhere
+// else from the next time they load the grid, which is what makes the store fill itself in.
+ppRemember();
 
 // Arriving at #myprogram (the hub's My-program card links here) opens straight into the personal view.
 if (window.location.hash === '#myprogram') {
