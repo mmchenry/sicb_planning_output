@@ -171,8 +171,6 @@ color:#444;user-select:none}
 border-radius:999px;padding:0 5px;font-weight:700}
 .ppopt:has(input:checked) .ppn{background:#fff}
 .ppexports{display:inline-flex;gap:6px}
-.ppnote{flex-basis:100%;margin:2px 0 0;font-size:11px;color:#6a6a6a}
-.ppnote[hidden]{display:none}
 .ppbtn{font:inherit;font-size:11px;font-weight:600;border:1px solid #ccced2;background:#fff;
 color:#333;border-radius:5px;padding:4px 11px;cursor:pointer}
 .ppbtn:hover{background:#f0f1f3}
@@ -202,8 +200,6 @@ margin:18px 0 6px;padding-bottom:3px;border-bottom:1px solid #e2e2e6}
 .ppitem{display:grid;grid-template-columns:82px 1fr auto;gap:12px;align-items:baseline;
 padding:7px 4px;border-bottom:1px solid #eef0f2}
 .ppwhen{font-size:12px;color:#333;font-variant-numeric:tabular-nums}
-.ppwhen .ppt1,.ppwhen .ppt2{display:block;white-space:nowrap}
-.ppwhen .ppt2{color:#666}
 .ppwhen .pproom{display:block;color:#888;font-size:10.5px;margin-top:1px}
 /* The itinerary row's title. Named `.ppttitle` until 2026-08-15, which matched nothing: the script
    writes `pptitle`. On screen it inherited the body's 13px and looked right, and in print it inherited
@@ -213,9 +209,6 @@ padding:7px 4px;border-bottom:1px solid #eef0f2}
 /* The author list, under the presenter and their institution. Its own line rather than more of the
    meta line: it is the longest thing in the row and would push the room and the session off the end. */
 .pptauth{font-size:10.5px;color:#8a8c92;margin-top:1px;line-height:1.35}
-/* The co-author line inside a session pane's lineup, under the presenter and their institution. One
-   rule here rather than the same rule in three page stylesheets. */
-.ppau{font-size:10.5px;color:#8a8c92;margin-top:1px;line-height:1.35}
 .pptag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.03em;color:#555;
 background:#eceef1;border-radius:3px;padding:0 5px;margin-right:5px;vertical-align:1px}
 .pprm{font:inherit;font-size:11px;border:0;background:none;color:#a11;cursor:pointer;padding:2px 4px}
@@ -254,7 +247,6 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  .devbanner{font-size:14.6px}
  .ppopt{font-size:14.6px}
  .ppopt .ppn{font-size:12.2px}
- .ppnote{font-size:13.4px}
  .ppbtn{font-size:13.4px}
  .ppstar{font-size:17.1px}
  .ppstar.ppsess{font-size:15.9px}
@@ -266,7 +258,6 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  .pptitle{font-size:15.9px}
  .pptmeta{font-size:13.4px}
  .pptauth{font-size:12.8px}
- .ppau{font-size:12.8px}
  .pptag{font-size:11.6px}
  .pprm{font-size:13.4px}
  #pppop{font-size:14.6px}
@@ -312,15 +303,6 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  #q,#qid,#aq{font-size:16px;padding:8px 10px}
  .sbox input[type=search]{padding-right:40px}
  .sx{font-size:20px;padding:7px 10px;right:1px}
- /* The remove link moves under the room rather than holding a column of
-    its own, which squeezed the title into a strip, and the room reads at something like full size,
-    since it is half of how a reader finds the talk. */
- .ppitem{grid-template-columns:118px minmax(0,1fr);grid-template-areas:"when body" "rm body";
- gap:2px 12px;align-items:start;padding:10px 4px}
- .ppwhen{grid-area:when}
- .ppitem>div:nth-child(2){grid-area:body}
- .ppwhen .pproom{font-size:15px;color:#333;margin-top:5px}
- .pprm{grid-area:rm;justify-self:start;padding-left:0;margin-top:2px}
 }
 </style></head><body><div class="wrap"><div class="devbanner">Upcoming meeting: this schedule is still being put together and will change</div><a class="home" href="../../index.html" title="Back to the main page"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M2 7.1 8 2.2l6 4.9v6.7H2V7.1Z"/><path d="M6.3 13.8V9.5h3.4v4.3"/></svg><span>Main</span></a><h1>SICB 2026 symposia</h1><p class="sub">12 symposia · 36 blocks · 145 invited talks · 19 complementary sessions · 86 complementary talks · 24 complementary posters · 4 days · A105, C120/121/122, C124</p><div class="ppbar"><div class="ppseg" role="radiogroup" aria-label="Program view"><label class="ppopt"><input type="radio" name="ppview" value="general" checked><span>General program</span></label><label class="ppopt"><input type="radio" name="ppview" value="personal"><span>My program</span> <span class="ppn" data-role="ppcount">0</span></label></div><div class="ppexports"><button type="button" class="ppbtn ppprint" hidden>Download PDF</button><button type="button" class="ppbtn ppics" hidden>Add to calendar</button><button type="button" class="ppbtn ppxlsx" hidden>Excel (.xlsx)</button><button type="button" class="ppbtn ppcsv" hidden>CSV</button><button type="button" class="ppbtn ppexport" hidden title="Save your program to a file you can load on another device">Back up</button><button type="button" class="ppbtn ppimport" hidden title="Load a program saved from another device">Restore</button><button type="button" class="ppbtn ppclear" hidden>Clear program</button><input type="file" class="ppfile" accept="application/json,.json" hidden></div><p class="ppnote" data-role="ppnote" hidden></p></div><div class="ppgeneral"><div class="panel"><div class="ph">Days<span class="acts"><button data-all>all</button><button data-none>none</button></span><span class="phn">a symposium shows while anything of its own or attached to it runs on a checked day</span></div><div class="filters"><label class="lg"><input type="checkbox" checked data-day="2026-01-04">Sunday 4 January</label><label class="lg"><input type="checkbox" checked data-day="2026-01-05">Monday 5 January</label><label class="lg"><input type="checkbox" checked data-day="2026-01-06">Tuesday 6 January</label><label class="lg"><input type="checkbox" checked data-day="2026-01-07">Wednesday 7 January</label></div></div><div class="panel mode"><div class="ph">Order</div><div class="filters"><label class="lg"><input type="radio" name="sort" value="number" checked>By number <span class="n">the program's own order</span></label><label class="lg"><input type="radio" name="sort" value="size">By size <span class="n">most presentations first</span></label><label class="lg"><input type="radio" name="sort" value="day">By day <span class="n">first day it runs</span></label></div></div><div class="panel search"><div class="ph">Search<span class="phn">presenter, author, affiliation, or words in a title</span></div><div class="srow"><span class="sbox"><input type="search" id="q" placeholder="a presenter, an organizer, an author, or words from a title" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="q" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="scount" data-role="scount"></span><span class="snav" hidden><button type="button" data-step="-1" title="Previous match">&#8249;</button><button type="button" data-step="1" title="Next match">&#8250;</button></span></div><div class="srow idrow"><label class="idlab" for="qid">Talk ID</label><span class="sbox idbox"><input type="search" id="qid" placeholder="e.g. 549" inputmode="numeric" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="qid" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="idmsg" data-role="idmsg"></span></div></div><h2>What each symposium brings</h2><p class="note">Every presentation attached to a symposium, on one scale so the symposia compare directly. The dark segment is the invited program its organizers built; the two lighter ones are what the membership added by submitting to it, which is the part no one plans for. Largest first, and a row links to the symposium below.</p><div class="skey"><span class="lg"><span class="sw" style="background:#3d3d3d"></span>Invited talks</span><span class="lg"><span class="sw" style="background:#7a8ca3"></span>Complementary talks</span><span class="lg"><span class="sw" style="background:#bcc6d1"></span>Complementary posters</span></div><div class="bars"><a class="brow" href="#s9" title="S9: Spotlighting the role of behavior in a rapidly changing world
 3 blocks, 10 invited talks
