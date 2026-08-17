@@ -111,6 +111,7 @@ font-weight:600;letter-spacing:.02em;margin:-20px -20px 14px;border-radius:0}
  .devbanner{font-size:14.6px}
  .ppopt{font-size:14.6px}
  .ppopt .ppn{font-size:12.2px}
+ .ppnote{font-size:13.4px}
  .ppbtn{font-size:13.4px}
  .ppstar{font-size:17.1px}
  .ppstar.ppsess{font-size:15.9px}
@@ -122,6 +123,7 @@ font-weight:600;letter-spacing:.02em;margin:-20px -20px 14px;border-radius:0}
  .pptitle{font-size:15.9px}
  .pptmeta{font-size:13.4px}
  .pptauth{font-size:12.8px}
+ .ppau{font-size:12.8px}
  .pptag{font-size:11.6px}
  .pprm{font-size:13.4px}
  #pppop{font-size:14.6px}
@@ -164,6 +166,15 @@ font-weight:600;letter-spacing:.02em;margin:-20px -20px 14px;border-radius:0}
  #q,#qid,#aq{font-size:16px;padding:8px 10px}
  .sbox input[type=search]{padding-right:40px}
  .sx{font-size:20px;padding:7px 10px;right:1px}
+ /* The remove link moves under the room rather than holding a column of
+    its own, which squeezed the title into a strip, and the room reads at something like full size,
+    since it is half of how a reader finds the talk. */
+ .ppitem{grid-template-columns:118px minmax(0,1fr);grid-template-areas:"when body" "rm body";
+ gap:2px 12px;align-items:start;padding:10px 4px}
+ .ppwhen{grid-area:when}
+ .ppitem>div:nth-child(2){grid-area:body}
+ .ppwhen .pproom{font-size:15px;color:#333;margin-top:5px}
+ .pprm{grid-area:rm;justify-self:start;padding-left:0;margin-top:2px}
 }
 </style></head><body><div class="wrap"><a class="home" href="../../index.html" title="Back to the main page"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M2 7.1 8 2.2l6 4.9v6.7H2V7.1Z"/><path d="M6.3 13.8V9.5h3.4v4.3"/></svg><span>Main</span></a><h1>SICB 2026 program statistics</h1><p class="sub">1272 contributed abstracts · 732 talks · 540 posters · 13 divisions · 61 unscheduled · peak 22 of 34 rooms</p><h2>Contributed presentations by division</h2><p class="note">Submitted abstracts and the type each was submitted as, so a withdrawn abstract still counts here. Both panels share one scale. The trailing figure is the division's own split between the two types.</p><div class="pair"><div class="chart"><div class="ch">Talks</div><div class="bars"><div class="brow" title="Ecology &amp; Evolution
 177 talks of 283 submissions"><div class="blab">DEE</div><div class="track"><div class="bar" style="width:100.00%;background:#2f7d4f"><span class="cnt">177</span></div></div><div class="btrail">63%</div></div><div class="brow" title="Comparative Biomechanics
