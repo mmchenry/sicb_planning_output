@@ -238,7 +238,11 @@ body.pp-personal #pppersonal{display:block}
 /* The page's title and the counts under it describe the general program, not the reader's own, so
    they come off with it. That also takes them out of the PDF, which is this view printed. */
 body.pp-personal h1,body.pp-personal .sub{display:none}
-.ppihead{margin:4px 0 12px}
+/* The "My program" heading is off on screen: the General / My program toggle sits directly above it
+   and already says which view is up, so the heading only repeated it. It is kept in the markup and
+   restored for print, where the toggle is hidden and the printout would otherwise begin with a bare
+   day heading and nothing naming what the pages are. */
+.ppihead{display:none}
 .ppih{margin:0;font-size:16px;border:0;padding:0}
 #ppitin{max-width:900px}
 .ppempty{color:#666;font-size:13px;background:#f6f7f9;border-radius:8px;padding:20px 22px;
@@ -285,6 +289,7 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
   body.pp-personal .ppgeneral,body.pp-personal aside,body.pp-personal .home,
   body.pp-personal .search,body.pp-personal .skey,body.pp-personal .simkey{display:none!important}
   body.pp-personal #pppersonal{display:block!important}
+  .ppihead{display:block;margin:0 0 12px}
   .ppitem{break-inside:avoid}
 }
 @media (max-width:700px){
@@ -300,6 +305,7 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  .devbanner{font-size:14.6px}
  .ppopt{font-size:14.6px}
  .ppopt .ppn{font-size:12.2px}
+ .ppnote{font-size:13.4px}
  .ppbtn{font-size:13.4px}
  .ppstar{font-size:17.1px}
  .ppstar.ppsess{font-size:15.9px}
@@ -311,6 +317,7 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  .pptitle{font-size:15.9px}
  .pptmeta{font-size:13.4px}
  .pptauth{font-size:12.8px}
+ .ppau{font-size:12.8px}
  .pptag{font-size:11.6px}
  .pprm{font-size:13.4px}
  #pppop{font-size:14.6px}
@@ -365,6 +372,29 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  #q,#qid,#aq{font-size:16px;padding:8px 10px}
  .sbox input[type=search]{padding-right:40px}
  .sx{font-size:20px;padding:7px 10px;right:1px}
+ /* The remove link moves under the room rather than holding a column of
+    its own, which squeezed the title into a strip, and the room reads at something like full size,
+    since it is half of how a reader finds the talk.
+
+    `grid-template-rows:auto 1fr` is what actually puts it under the room. The title column spans both
+    rows and is much the taller of the two, and with rows left to size themselves the browser hands that
+    surplus to the first row: the link then floats level with the middle of the title, a finger's width
+    below the room and reading as though it belongs to nothing. Pinning row 1 to its content sends every
+    spare pixel to row 2 instead, so the link sits directly beneath the room whatever length the title
+    runs to.
+
+    The left column is 96px, which is the widest room name on the schedule ("C120/121/122", 91px) plus
+    a little, and the column gap is 9px. Both were wider, and between them they left something like a
+    quarter of a 390px screen empty on a row whose time reads "8:00 AM". The one room that does not fit
+    is the poster hall, "Exhibit Hall A/A1", which wraps to two lines on the poster page: every row
+    there is in that hall, so it wraps uniformly rather than raggedly, which is the better trade for
+    the width it returns to the title on every other page. */
+ .ppitem{grid-template-columns:96px minmax(0,1fr);grid-template-areas:"when body" "rm body";
+ grid-template-rows:auto 1fr;gap:2px 9px;align-items:start;padding:10px 4px}
+ .ppwhen{grid-area:when}
+ .ppitem>div:nth-child(2){grid-area:body}
+ .ppwhen .pproom{font-size:15px;color:#333;margin-top:5px}
+ .pprm{grid-area:rm;align-self:start;justify-self:start;padding-left:0;margin-top:2px}
  body.pane-left,body.pane-right{padding-left:20px;padding-right:20px}
  #detail,#compare{width:100%;max-width:none;height:100dvh;box-shadow:none}
  #compare{z-index:22}
