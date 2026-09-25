@@ -3,6 +3,11 @@
 window.SICB_PAGES = {
   "2027": [
     "schedule",
+    "talks",
+    "posters",
+    "symposia",
+    "stats",
+    "authors",
     "venue"
   ],
   "2026": [
