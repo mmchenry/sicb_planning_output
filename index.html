@@ -18,9 +18,6 @@ background:#4b2e83;border-radius:4px;padding:2px 7px;vertical-align:6px;margin-l
 .devbanner{background:#4b2e83;color:#fff;text-align:center;padding:7px 14px;font-size:12.5px;
 font-weight:600;letter-spacing:.02em;margin:-44px -24px 26px}
 .devbanner[hidden]{display:none}
-.card.personal{border-color:#e8a300;background:#fffdf6}
-.card.personal h3{color:#8a6100}
-.card.personal .star{color:#e8a300}
 .sub{color:var(--muted);font-size:13px;margin:0}
 h2{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
 margin:34px 0 12px;font-weight:700}
@@ -65,7 +62,7 @@ text-transform:none}
 <meta name="color-scheme" content="dark"><style data-theme="dark">@media screen{:root{color-scheme:dark}
 html,body{background:#15191d;color:#dde2e6}
 a{color:#8fb4e8}
-:root{--ink:#d0d0d0;--muted:#959595;--line:#2d2d34;--panel:#1a1f27;--accent:#85a5d5;--bg:#1b1b1b}.card.personal{border-color:#ffce5c;background:#2e270f}.card.personal h3{color:#ffcf5c}.card.personal .star{color:#ffce5c}.tag{color:#959595}.card p{color:#b0b0b0}.meta .warn{color:#ffb95c}.onlyyear{color:#ffb95c;background:#312615;border:1px solid #463a27}.card .missing{color:#ffb95c}}</style></head>
+:root{--ink:#d0d0d0;--muted:#959595;--line:#2d2d34;--panel:#1a1f27;--accent:#85a5d5;--bg:#1b1b1b}.tag{color:#959595}.card p{color:#b0b0b0}.meta .warn{color:#ffb95c}.onlyyear{color:#ffb95c;background:#312615;border:1px solid #463a27}.card .missing{color:#ffb95c}}</style></head>
 <body>
 <div class="devbanner" id="devbanner" hidden>Programming mode active: pages describe an upcoming meeting still in development</div>
 <div class="wrap">
@@ -90,17 +87,6 @@ a{color:#8fb4e8}
 <h2>The meeting</h2>
 
 <div class="cards">
-  <a class="card personal" data-personal>
-    <h3><span class="star">&#9733;</span> My program</h3>
-    <p>Star talks, posters, and sessions to build a personal itinerary. Read it by day, print to PDF,
-      add to your calendar, or export to a spreadsheet. Saved in this browser, per year.</p>
-    <div class="meta">
-      <span class="missing">Opens once a year is published</span>
-      <span>Saved in your browser</span>
-      <span>PDF, calendar, and spreadsheet exports</span>
-    </div>
-  </a>
-
   <a class="card" data-page="schedule">
     <h3>Schedule grid</h3>
     <p>Every activity placed by room and time. Filter by date, division, or type; click a session
@@ -130,7 +116,7 @@ a{color:#8fb4e8}
   <a class="card" data-page="authors">
     <h3>Meeting participants</h3>
     <p>The Executive committee, then every presenter, alphabetical and searchable, with institution and
-      title. Open one for their presentations (star them, hover for the abstract) and their co-authors.</p>
+      title. Open one for their presentations (hover for the abstract) and their co-authors.</p>
     <div class="meta">
       <span class="missing">Not built for this year yet</span>
       <span>Search by name, institution, or co-author</span>
@@ -212,7 +198,6 @@ a{color:#8fb4e8}
   var years = Object.keys(PAGES).sort().reverse();
   var box = document.getElementById('years');
   var cards = Array.prototype.slice.call(document.querySelectorAll('.card[data-page]'));
-  var personalCard = document.querySelector('.card[data-personal]');
 
   // A page that exists for no published year is not just absent for the current selection, it is not
   // part of this build at all, so its card is removed rather than greyed. That is what drops the
@@ -227,7 +212,6 @@ a{color:#8fb4e8}
     box.insertAdjacentHTML('beforeend', '<p class="note">No published years found. Rebuild from ' +
       '<code>main_schedule.ipynb</code>, which writes <code>years.js</code>.</p>');
     cards.forEach(function (card) { card.classList.add('absent'); });
-    if (personalCard) personalCard.classList.add('absent');
     return;
   }
 
@@ -255,16 +239,6 @@ a{color:#8fb4e8}
         card.removeAttribute('href');
       }
     });
-    // The personal program is the schedule opened straight into its My-program view.
-    if (personalCard) {
-      var hasSchedule = (PAGES[year] || []).indexOf('schedule') >= 0;
-      personalCard.classList.toggle('absent', !hasSchedule);
-      if (hasSchedule) {
-        personalCard.setAttribute('href', year + '/schedule/index.html#myprogram');
-      } else {
-        personalCard.removeAttribute('href');
-      }
-    }
     var built = (PAGES[year] || []).length;
     var note = 'SICB ' + year + ': ';
     if (!built) {
