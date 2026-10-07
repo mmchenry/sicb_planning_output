@@ -34,6 +34,11 @@ box-shadow:inset 0 0 0 1px rgba(255,255,255,.18)}
 display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .card.off{display:none}
 section.divblock.off{display:none}
+/* The member site's layout: a section per day, a group per start time headed by that time. */
+.group.off{display:none}
+.slot h3{font-size:11px;font-weight:700;color:var(--muted);margin:12px 0 6px;letter-spacing:.02em}
+.cn{font-weight:400;opacity:.85;white-space:nowrap}
+.card.empty{cursor:default}
 .card.refsel{box-shadow:inset 0 0 0 3px #111}
 .card.cmpsel{box-shadow:inset 0 0 0 3px #111,inset 0 0 0 6px rgba(255,255,255,.6)}
 .card.nosim{opacity:.45}
@@ -148,6 +153,8 @@ color:#444;user-select:none}
 border-radius:999px;padding:0 5px;font-weight:700}
 .ppopt:has(input:checked) .ppn{background:#fff}
 .ppexports{display:inline-flex;gap:6px}
+.ppmenu{display:none}
+.ppmore{display:contents}
 .ppnote{flex-basis:100%;margin:2px 0 0;font-size:11px;color:#6a6a6a}
 .ppnote[hidden]{display:none}
 .ppbtn{font:inherit;font-size:11px;font-weight:600;border:1px solid #ccced2;background:#fff;
@@ -161,6 +168,11 @@ color:#c3c5cb;cursor:pointer;padding:0 2px;vertical-align:baseline}
 .ppclear{color:#a11;border-color:#e3b7b7}
 .ppclear:hover{background:#fbeaea}
 .ppsesstag{background:#3a3a3a;color:#fff}
+/* What has already happened, greyed on the member site (PP_PAST). A row inside a greyed card is not
+   faded twice, and a printout shows everything at full strength. */
+.past{opacity:.42;filter:grayscale(1)}
+.past .past{opacity:1;filter:none}
+@media print{.past{opacity:1;filter:none}}
 .ppsessrow .pptitle{font-weight:600}
 /* A starred whole session lists what is in it, in running order (per the PO, 2026-10-07). */
 .ppsub{margin:5px 0 0;padding-left:18px;font-size:12px;line-height:1.35}
@@ -206,6 +218,9 @@ padding:7px 4px;border-bottom:1px solid #eef0f2}
 .pptag{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.03em;color:#555;
 background:#eceef1;border-radius:3px;padding:0 5px;margin-right:5px;vertical-align:1px}
 .pprm{font:inherit;font-size:11px;border:0;background:none;color:#a11;cursor:pointer;padding:2px 4px}
+/* Two talks in a program at the same time (per the PO, 2026-10-07). */
+.ppitem.ppclash{background:#fff4dc;box-shadow:inset 3px 0 #e8a300}
+.ppclashtag{background:#e8a300;color:#fff}
 .pprm:hover{text-decoration:underline}
 .ppabx{cursor:help;border-bottom:1px dotted #b7b9bf}
 #pppop{position:fixed;z-index:50;max-width:360px;max-height:52vh;overflow:auto;background:#fff;
@@ -229,8 +244,8 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
   .ppihead{display:block;margin:0 0 12px}
   .ppitem{break-inside:avoid}
   .ppdevice{display:none!important}
-  /* The compact PDF: two columns, smaller type, no author lists. The body carries pp-compact only
-     while that button's print is under way. */
+  /* The compact PDF: two columns, smaller type, no author lists. The body carries pp-compact from
+     that button's print until the next print or the reader leaves My program. */
   body.pp-compact #ppitin{column-count:2;column-gap:22px;max-width:none}
   body.pp-compact .ppday{break-after:avoid;margin:8px 0 3px;font-size:9px}
   body.pp-compact .ppitem{grid-template-columns:54px minmax(0,1fr);gap:6px;padding:3px 0}
@@ -295,6 +310,7 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  .ct{font-size:14px}
  .cm{font-size:12.2px}
  .ck{font-size:11.6px}
+ .slot h3{font-size:13.4px}
  .simkey{font-size:12.8px}
  .skclear{font-size:11px}
  #detail h3,#compare h3{font-size:17.1px}
@@ -337,6 +353,11 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
  .ppitem>div:nth-child(2){grid-area:body}
  .ppwhen .pproom{font-size:15px;color:#333;margin-top:5px}
  .pprm{grid-area:rm;align-self:start;justify-self:start;padding-left:0;margin-top:2px}
+ /* The phone's Export button, and the row of exports it opens beneath the two Clear buttons. */
+ .ppexports{flex-wrap:wrap}
+ .ppmenu:not([hidden]){display:inline-flex;align-items:center}
+ .ppmore{display:flex;flex-wrap:wrap;gap:6px;flex-basis:100%;order:3}
+ body:not(.pp-more) .ppmore{display:none}
  body.pane-left,body.pane-right{padding-left:24px;padding-right:24px}
  #detail,#compare{width:100%;max-width:none;height:100dvh;box-shadow:none}
  #compare{z-index:22}
@@ -347,7 +368,7 @@ line-height:1;color:#999;cursor:pointer;padding:0 3px}
 </style><meta name="color-scheme" content="dark"><style data-theme="dark">@media screen{:root{color-scheme:dark}
 html,body{background:#15191d;color:#dde2e6}
 a{color:#8fb4e8}
-:root{--ink:#d0d0d0;--muted:#959595;--line:#2d2d34;--panel:#1a1f27;--bg:#1b1b1b}.intro{color:#a3a3a3}.ph{color:#a3a3a3}.acts button{border:1px solid #3d4045;background:#1b1b1b;color:#b0b0b0}.acts button:hover{background:#22272e}.lg .n{color:#888888}.card:hover{box-shadow:inset 0 0 0 1px rgba(26,26,26,0.5)}.card.cmpsel{box-shadow:inset 0 0 0 3px #111,inset 0 0 0 6px rgba(26,26,26,0.6)}.simkey{color:#a3a3a3}.simkey code{background:#1b1b1b}.nokey{color:#d9bc82}.skhint{color:#959595}.sklo,.skhi{color:#b0b0b0}.skclear{border:1px solid #3d4045;background:#1b1b1b;color:#b0b0b0}.none{color:#7a7a7a}#detail,#compare{background:#1b1b1b}#detail .meta,#compare .meta{color:#a3a3a3}#detail .kw,#compare .kw{color:#959595}#detail li,#compare li{border-bottom:1px solid #232329}.pw{color:#b0b0b0}.ps{color:#888888}.simval{color:#d9d9d9}#detail .pclose,#compare .pclose{background:#2b3138;color:#bebebe}#detail .pclose:hover,#compare .pclose:hover{background:#373e46}.sx{color:#717379}.sx:hover{color:#cccccc;background:#22272e}.search .idlab{color:#a3a3a3}.search .idmsg{color:#f06b6b}.search input[type=search]{border:1px solid #3d4045;background:#1b1b1b}.search input[type=search]:focus{outline:2px solid #85a5d5}.search .phn{color:#787878}.scount{color:#a3a3a3}.scount.zero{color:#d98181}.snav button{border:1px solid #3d4045;background:#1b1b1b;color:#b0b0b0}.snav button:hover{background:#22272e}.snote{color:#d9bc82}#detail li.hit,#compare li.hit{background:#403815}.home{color:#9499a0}.home:hover{color:#85a5d5;border-color:#85a5d5}.ppseg{border:1px solid #3d4045;background:#1b1b1b}.ppopt{color:#b0b0b0}.ppopt+.ppopt{border-left:1px solid #2d2d34}.ppopt .ppn{color:#d0d0d0}.ppopt:has(input:checked) .ppn{background:#1b1b1b}.ppnote{color:#929292}.ppbtn{border:1px solid #3d4045;background:#1b1b1b;color:#bebebe}.ppbtn:hover{background:#21242a}.ppstar{color:#42454d}.ppstar:hover{color:#ffce5c}.ppstar.on{color:#ffce5c}.ppclear{color:#f06b6b}.ppclear:hover{background:#311818}.ppsubw{color:#a3a3a3}.ppsubm{color:#888888}.ppdevice{color:#929292}.ppempty{color:#959595;background:#1a1f27}.ppday{color:#a3a3a3;border-bottom:1px solid #2d2d34}.ppitem{border-bottom:1px solid #22272c}.ppwhen{color:#bebebe}.ppwhen .ppt2{color:#959595}.ppwhen .pproom{color:#7a7a7a}.pptmeta{color:#888888}.pptauth{color:#717379}.ppau{color:#717379}.pptag{color:#a3a3a3;background:#22272e}.pprm{color:#f06b6b}.ppabx{border-bottom:1px dotted #4c4f56}#pppop{background:#1b1b1b;color:#d0d0d0;border:1px solid #373a43}#pppop .pppop-x{color:#6c6c6c}#pppop .pppop-x:hover{color:#cccccc}#pppop .ppk{color:#a3a3a3}#pppop .ppk b{color:#bebebe}#pppop .ppa{color:#cccccc}}@media screen and (max-width:700px){.ppwhen .pproom{color:#bebebe}}</style></head><body><div class="wrap"><div class="devbanner">Upcoming meeting: this schedule is still being put together and will change</div><a class="home" href="../../index.html" title="Back to the main page"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M2 7.1 8 2.2l6 4.9v6.7H2V7.1Z"/><path d="M6.3 13.8V9.5h3.4v4.3"/></svg><span>Main</span></a><h1>SICB 2027 contributed talk sessions</h1><p class="sub"><span class="dcount" data-source="working">131 sessions · 906 presentations · 13 divisions · 112 sessions scored for similarity</span></p><div class="ppgeneral"><p class="intro">Contributed talk sessions, grouped by the division that assembled them and listed in that division's own numbered order. Nothing in the drafted view is scheduled: a drafted session has no room, day, or time until it is placed on the schedule, and no title either, so its card is headed by the keywords its abstracts share.</p><div class="panel"><div class="simkey"><span class="skhint"><b>Click a session</b> to colour every other session by how similar its science is. <b>Click a second session</b> to open the two side by side and read what is in them.</span><span class="skscale" hidden><span class="ramp"><span style="background:#1c1044"></span><span style="background:#3b0f70"></span><span style="background:#6b1d81"></span><span style="background:#9e2f7f"></span><span style="background:#cd4071"></span><span style="background:#f1605d"></span><span style="background:#fd9668"></span><span style="background:#feca8d"></span><span style="background:#fcfdbf"></span></span><span class="sklo" data-role="lo"></span><span class="skhi" data-role="hi"></span><button class="skclear" type="button">clear</button></span><span class="nokey" hidden>no similarity data for this view; needs <code>talks_similarity.csv</code></span></div></div><div class="panel"><div class="ph">Divisions<span class="acts"><button data-all>all</button><button data-none>none</button></span></div><div class="filters"><label class="lg"><input type="checkbox" checked data-div="dab"><span class="sw" style="background:#9c2f2f"></span>DAB <span class="n">Animal Behavior <span class="num" data-n-working="12">12</span> sessions, <span class="num" data-n-working="82">82</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dcb"><span class="sw" style="background:#2b4c7e"></span>DCB <span class="n">Comparative Biomechanics <span class="num" data-n-working="27">27</span> sessions, <span class="num" data-n-working="190">190</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dedb"><span class="sw" style="background:#6a4c93"></span>DEDB <span class="n">Evolutionary Developmental Biology <span class="num" data-n-working="7">7</span> sessions, <span class="num" data-n-working="41">41</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dede"><span class="sw" style="background:#8a6d1f"></span>DEDE <span class="n">Ecoimmunology and Disease Ecology <span class="num" data-n-working="7">7</span> sessions, <span class="num" data-n-working="49">49</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dee"><span class="sw" style="background:#2f7d4f"></span>DEE <span class="n">Ecology &amp; Evolution <span class="num" data-n-working="22">22</span> sessions, <span class="num" data-n-working="154">154</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="diz"><span class="sw" style="background:#1f6fa8"></span>DIZ <span class="n">Invertebrate Zoology <span class="num" data-n-working="4">4</span> sessions, <span class="num" data-n-working="32">32</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dnnsb"><span class="sw" style="background:#b03a6a"></span>DNNSB <span class="n">Neurobiology, Neuroethology, and Sensory Biology <span class="num" data-n-working="10">10</span> sessions, <span class="num" data-n-working="77">77</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dob"><span class="sw" style="background:#7a9a2b"></span>DOB <span class="n">Botany <span class="num" data-n-working="2">2</span> sessions, <span class="num" data-n-working="11">11</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dpcb"><span class="sw" style="background:#4c5b9e"></span>DPCB <span class="n">Phylogenetics and Comparative Biology <span class="num" data-n-working="6">6</span> sessions, <span class="num" data-n-working="43">43</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dphys"><span class="sw" style="background:#1f6f6f"></span>DPHYS <span class="n">Comparative Physiology <span class="num" data-n-working="12">12</span> sessions, <span class="num" data-n-working="87">87</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dvm"><span class="sw" style="background:#c1651c"></span>DVM <span class="n">Vertebrate Morphology <span class="num" data-n-working="14">14</span> sessions, <span class="num" data-n-working="89">89</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="edu"><span class="sw" style="background:#6b4f2a"></span>EDU <span class="n">Outreach, Education, and Policy <span class="num" data-n-working="1">1</span> sessions, <span class="num" data-n-working="7">7</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div=""><span class="sw" style="background:#8c8c8c"></span>none <span class="n">no division resolved <span class="num" data-n-working="7">7</span> sessions, <span class="num" data-n-working="44">44</span> talks</span></label></div></div><div class="panel search"><div class="ph">Search<span class="phn">presenter, author, affiliation, words in a title, or a session code such as dab-t1</span></div><div class="srow"><span class="sbox"><input type="search" id="q" placeholder="a presenter, an author, or words from a talk title" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="q" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="scount" data-role="scount"></span><span class="snav" hidden><button type="button" data-step="-1" title="Previous match">&#8249;</button><button type="button" data-step="1" title="Next match">&#8250;</button></span></div><div class="srow idrow"><label class="idlab" for="qid">Talk ID</label><span class="sbox idbox"><input type="search" id="qid" placeholder="e.g. 549" inputmode="numeric" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="qid" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="idmsg" data-role="idmsg"></span></div></div><div class="dataset" data-source="working"><section class="divblock" data-div=""><h2><span class="ab" style="background:#8c8c8c">?</span>No division resolved<span class="dn">7 sessions · 44 talks</span></h2><div class="cards"><div class="card" data-id="xcd-58885" data-div="" data-base="#8c8c8c" style="background:#8c8c8c" data-find="legacy session for scott santos special_santos1" title="special_santos1 · 
+:root{--ink:#d0d0d0;--muted:#959595;--line:#2d2d34;--panel:#1a1f27;--bg:#1b1b1b}.intro{color:#a3a3a3}.ph{color:#a3a3a3}.acts button{border:1px solid #3d4045;background:#1b1b1b;color:#b0b0b0}.acts button:hover{background:#22272e}.lg .n{color:#888888}.card:hover{box-shadow:inset 0 0 0 1px rgba(26,26,26,0.5)}.card.cmpsel{box-shadow:inset 0 0 0 3px #111,inset 0 0 0 6px rgba(26,26,26,0.6)}.simkey{color:#a3a3a3}.simkey code{background:#1b1b1b}.nokey{color:#d9bc82}.skhint{color:#959595}.sklo,.skhi{color:#b0b0b0}.skclear{border:1px solid #3d4045;background:#1b1b1b;color:#b0b0b0}.none{color:#7a7a7a}#detail,#compare{background:#1b1b1b}#detail .meta,#compare .meta{color:#a3a3a3}#detail .kw,#compare .kw{color:#959595}#detail li,#compare li{border-bottom:1px solid #232329}.pw{color:#b0b0b0}.ps{color:#888888}.simval{color:#d9d9d9}#detail .pclose,#compare .pclose{background:#2b3138;color:#bebebe}#detail .pclose:hover,#compare .pclose:hover{background:#373e46}.sx{color:#717379}.sx:hover{color:#cccccc;background:#22272e}.search .idlab{color:#a3a3a3}.search .idmsg{color:#f06b6b}.search input[type=search]{border:1px solid #3d4045;background:#1b1b1b}.search input[type=search]:focus{outline:2px solid #85a5d5}.search .phn{color:#787878}.scount{color:#a3a3a3}.scount.zero{color:#d98181}.snav button{border:1px solid #3d4045;background:#1b1b1b;color:#b0b0b0}.snav button:hover{background:#22272e}.snote{color:#d9bc82}#detail li.hit,#compare li.hit{background:#403815}.home{color:#9499a0}.home:hover{color:#85a5d5;border-color:#85a5d5}.ppseg{border:1px solid #3d4045;background:#1b1b1b}.ppopt{color:#b0b0b0}.ppopt+.ppopt{border-left:1px solid #2d2d34}.ppopt .ppn{color:#d0d0d0}.ppopt:has(input:checked) .ppn{background:#1b1b1b}.ppnote{color:#929292}.ppbtn{border:1px solid #3d4045;background:#1b1b1b;color:#bebebe}.ppbtn:hover{background:#21242a}.ppstar{color:#42454d}.ppstar:hover{color:#ffce5c}.ppstar.on{color:#ffce5c}.ppclear{color:#f06b6b}.ppclear:hover{background:#311818}.ppsubw{color:#a3a3a3}.ppsubm{color:#888888}.ppdevice{color:#929292}.ppempty{color:#959595;background:#1a1f27}.ppday{color:#a3a3a3;border-bottom:1px solid #2d2d34}.ppitem{border-bottom:1px solid #22272c}.ppwhen{color:#bebebe}.ppwhen .ppt2{color:#959595}.ppwhen .pproom{color:#7a7a7a}.pptmeta{color:#888888}.pptauth{color:#717379}.ppau{color:#717379}.pptag{color:#a3a3a3;background:#22272e}.pprm{color:#f06b6b}.ppitem.ppclash{background:#3d3014}.ppabx{border-bottom:1px dotted #4c4f56}#pppop{background:#1b1b1b;color:#d0d0d0;border:1px solid #373a43}#pppop .pppop-x{color:#6c6c6c}#pppop .pppop-x:hover{color:#cccccc}#pppop .ppk{color:#a3a3a3}#pppop .ppk b{color:#bebebe}#pppop .ppa{color:#cccccc}}@media screen and (max-width:700px){.ppwhen .pproom{color:#bebebe}}</style></head><body><div class="wrap"><div class="devbanner">Upcoming meeting: this schedule is still being put together and will change</div><a class="home" href="../../index.html" title="Back to the main page"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"><path d="M2 7.1 8 2.2l6 4.9v6.7H2V7.1Z"/><path d="M6.3 13.8V9.5h3.4v4.3"/></svg><span>Main</span></a><h1>SICB 2027 contributed talk sessions</h1><p class="sub"><span class="dcount" data-source="working">131 sessions · 906 presentations · 13 divisions · 112 sessions scored for similarity</span></p><div class="ppgeneral"><p class="intro">Contributed talk sessions, grouped by the division that assembled them and listed in that division's own numbered order. Nothing in the drafted view is scheduled: a drafted session has no room, day, or time until it is placed on the schedule, and no title either, so its card is headed by the keywords its abstracts share.</p><div class="panel"><div class="simkey"><span class="skhint"><b>Click a session</b> to colour every other session by how similar its science is. <b>Click a second session</b> to open the two side by side and read what is in them.</span><span class="skscale" hidden><span class="ramp"><span style="background:#1c1044"></span><span style="background:#3b0f70"></span><span style="background:#6b1d81"></span><span style="background:#9e2f7f"></span><span style="background:#cd4071"></span><span style="background:#f1605d"></span><span style="background:#fd9668"></span><span style="background:#feca8d"></span><span style="background:#fcfdbf"></span></span><span class="sklo" data-role="lo"></span><span class="skhi" data-role="hi"></span><button class="skclear" type="button">clear</button></span><span class="nokey" hidden>no similarity data for this view; needs <code>talks_similarity.csv</code></span></div></div><div class="panel"><div class="ph">Divisions<span class="acts"><button data-all>all</button><button data-none>none</button></span></div><div class="filters"><label class="lg"><input type="checkbox" checked data-div="dab"><span class="sw" style="background:#9c2f2f"></span>DAB <span class="n">Animal Behavior <span class="num" data-n-working="12">12</span> sessions, <span class="num" data-n-working="82">82</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dcb"><span class="sw" style="background:#2b4c7e"></span>DCB <span class="n">Comparative Biomechanics <span class="num" data-n-working="27">27</span> sessions, <span class="num" data-n-working="190">190</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dedb"><span class="sw" style="background:#6a4c93"></span>DEDB <span class="n">Evolutionary Developmental Biology <span class="num" data-n-working="7">7</span> sessions, <span class="num" data-n-working="41">41</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dede"><span class="sw" style="background:#8a6d1f"></span>DEDE <span class="n">Ecoimmunology and Disease Ecology <span class="num" data-n-working="7">7</span> sessions, <span class="num" data-n-working="49">49</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dee"><span class="sw" style="background:#2f7d4f"></span>DEE <span class="n">Ecology &amp; Evolution <span class="num" data-n-working="22">22</span> sessions, <span class="num" data-n-working="154">154</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="diz"><span class="sw" style="background:#1f6fa8"></span>DIZ <span class="n">Invertebrate Zoology <span class="num" data-n-working="4">4</span> sessions, <span class="num" data-n-working="32">32</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dnnsb"><span class="sw" style="background:#b03a6a"></span>DNNSB <span class="n">Neurobiology, Neuroethology, and Sensory Biology <span class="num" data-n-working="10">10</span> sessions, <span class="num" data-n-working="77">77</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dob"><span class="sw" style="background:#7a9a2b"></span>DOB <span class="n">Botany <span class="num" data-n-working="2">2</span> sessions, <span class="num" data-n-working="11">11</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dpcb"><span class="sw" style="background:#4c5b9e"></span>DPCB <span class="n">Phylogenetics and Comparative Biology <span class="num" data-n-working="6">6</span> sessions, <span class="num" data-n-working="43">43</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dphys"><span class="sw" style="background:#1f6f6f"></span>DPHYS <span class="n">Comparative Physiology <span class="num" data-n-working="12">12</span> sessions, <span class="num" data-n-working="87">87</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="dvm"><span class="sw" style="background:#c1651c"></span>DVM <span class="n">Vertebrate Morphology <span class="num" data-n-working="14">14</span> sessions, <span class="num" data-n-working="89">89</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div="edu"><span class="sw" style="background:#6b4f2a"></span>EDU <span class="n">Outreach, Education, and Policy <span class="num" data-n-working="1">1</span> sessions, <span class="num" data-n-working="7">7</span> talks</span></label><label class="lg"><input type="checkbox" checked data-div=""><span class="sw" style="background:#8c8c8c"></span>none <span class="n">no division resolved <span class="num" data-n-working="7">7</span> sessions, <span class="num" data-n-working="44">44</span> talks</span></label></div></div><div class="panel search"><div class="ph">Search<span class="phn">presenter, author, affiliation, words in a title, or a session code such as dab-t1</span></div><div class="srow"><span class="sbox"><input type="search" id="q" placeholder="a presenter, an author, or words from a talk title" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="q" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="scount" data-role="scount"></span><span class="snav" hidden><button type="button" data-step="-1" title="Previous match">&#8249;</button><button type="button" data-step="1" title="Next match">&#8250;</button></span></div><div class="srow idrow"><label class="idlab" for="qid">Talk ID</label><span class="sbox idbox"><input type="search" id="qid" placeholder="e.g. 549" inputmode="numeric" autocomplete="off" spellcheck="false"><button type="button" class="sx" data-for="qid" aria-label="Clear the search" title="Clear" hidden>&#215;</button></span><span class="idmsg" data-role="idmsg"></span></div></div><div class="dataset" data-source="working"><section class="divblock" data-div=""><h2><span class="ab" style="background:#8c8c8c">?</span>No division resolved<span class="dn">7 sessions · 44 talks</span></h2><div class="cards"><div class="card" data-id="xcd-58885" data-div="" data-base="#8c8c8c" style="background:#8c8c8c" data-find="legacy session for scott santos special_santos1" title="special_santos1 · 
 6 presentations
 Click to list the presentations"><div class="ct"> Legacy session for Scott Santos</div><div class="cm"><b>special_santos1</b> · 6 talks</div></div><div class="card" data-id="xcd-58892" data-div="" data-base="#8c8c8c" style="background:#8c8c8c" data-find="legacy session for scott santos special_santos2" title="special_santos2 · 
 6 presentations
@@ -625,26 +646,30 @@ var compare = document.getElementById('compare');
 // first click turns the page into the comparison, so the two would have been the same view.
 var reference = null;
 
-// A division with every card hidden hides its heading too, so the page does not leave a row of
-// empty headings behind when a filter clears it.
+// A division, a day or a start time with every card hidden hides its heading too, so the page does not
+// leave a row of empty headings behind when a filter clears it.
 function applyFilters() {
-  var hidden = {};
+  var hidden = {}, offDays = {};
   document.querySelectorAll('input[data-div]').forEach(function (cb) {
     if (!cb.checked) hidden[cb.dataset.div] = 1;
   });
-  document.querySelectorAll('.dataset[data-source="' + source + '"] section.divblock')
-    .forEach(function (block) {
-    var shown = 0;
-    block.querySelectorAll('.card').forEach(function (card) {
-      var show = !hidden[card.dataset.div];
-      card.classList.toggle('off', !show);
-      if (show) shown++;
-    });
-    block.classList.toggle('off', shown === 0);
+  // The member site's Dates panel: a card on an unchecked day is hidden with its day.
+  document.querySelectorAll('input[data-day]').forEach(function (cb) {
+    if (!cb.checked) offDays[cb.dataset.day] = 1;
+  });
+  var root = document.querySelector('.dataset[data-source="' + source + '"]');
+  if (!root) return;
+  root.querySelectorAll('.card').forEach(function (card) {
+    var day = card.closest('section.day');
+    var off = !!hidden[card.dataset.div] || !!(day && offDays[day.dataset.iso]);
+    card.classList.toggle('off', off);
+  });
+  root.querySelectorAll('section.divblock, .group').forEach(function (block) {
+    block.classList.toggle('off', !block.querySelector('.card:not(.off)'));
   });
 }
 
-document.querySelectorAll('input[data-div]').forEach(function (cb) {
+document.querySelectorAll('input[data-div], input[data-day]').forEach(function (cb) {
   cb.addEventListener('change', function () { applyFilters(); refreshSearch(); });
 });
 
@@ -697,6 +722,8 @@ document.querySelectorAll('.card').forEach(function (card) {
 // open a second session on the left for comparison. Clicking the reference again clears it. With no
 // similarity data at all the click just opens the session.
 function onCardClick(card) {
+  // A meeting or a workshop with nothing to list opens nothing; its star still works.
+  if (card.classList.contains('empty')) return;
   var id = card.dataset.id;
   if (!COMPARE) { fill(detail, id, null); return; }
   if (!SIM.matrix[id]) { fill(detail, id, null); return; }
@@ -726,6 +753,8 @@ function paint() {
     card.classList.remove('refsel', 'cmpsel', 'nosim', 'darktext');
     if (!reference) {
       card.style.background = card.dataset.base;
+      // A light card (a symposium's yellow) keeps its dark text when a selection is cleared.
+      if (luminance(card.dataset.base) > 0.58) card.classList.add('darktext');
       return;
     }
     if (card.dataset.id === reference) {
@@ -798,6 +827,9 @@ function fill(panel, id, sim) {
   if (sim !== null && sim !== undefined) {
     extra = ' · similarity to reference <span class="simval">' + sim.toFixed(3) + '</span>';
   }
+  // The member site's sessions carry when and where they run (`when`), which heads the pane in place of
+  // the division and the code, and each talk its own time.
+  var member = s.when !== undefined;
   // The abstract id leads the title, so it is no longer repeated in the line above.
   var rows = s.items.map(function (p, i) {
     // The drafted source knows each abstract's division, the programmed one knows the institution.
@@ -806,18 +838,23 @@ function fill(panel, id, sim) {
     var authors = ppCoauthors(p.ab, p.who);
     var abx = (p.ab && ppHasAbs(p.ab)) ? ' ppabx' : '';
     var abattr = p.ab ? ' data-ab="' + esc(p.ab) + '"' : '';
-    return '<li' + hitAttr(id, i) + '><div class="ps">' + (p.n ? p.n + '.' : '') +
-      ' ' + ppStarBtn(p.ab) + '</div>' +
+    var when = (member && p.s) ? ' ' + pp12(p.s) : '';
+    return '<li' + hitAttr(id, i) + ppUntilAttr(s.iso, p.e || ppSpanEnd(s.span)) + '><div class="ps">' +
+      (p.n ? p.n + '.' : '') + when + ' ' + ppStarBtn(p.ab) + '</div>' +
       '<div class="pt' + abx + '"' + abattr + '>' + (p.ab ? esc(p.ab) + ': ' : '') + p.t + '</div>' +
       (who ? '<div class="pw">' + esc(who) + '</div>' : '') +
       (authors ? '<div class="ppau">' + esc(authors) + '</div>' : '') + '</li>';
   }).join('');
+  var noun = member ? (s.type === 'poster' ? 'poster' : 'talk') : 'presentation';
+  var count = s.items.length + ' ' + noun + (s.items.length === 1 ? '' : 's');
+  var meta = member
+    ? [s.when, s.where].filter(Boolean).map(esc).concat([count]).join(' · ')
+    : '<b>' + esc(s.label) + '</b> · ' + esc(s.division) + ' · ' + count +
+      (s.outside.length ? ' · also from ' + esc(s.outside.join(', ')) : '');
   panel.innerHTML =
     '<header><button class="pclose" aria-label="Close" title="Close and clear selection">×</button>' +
-    '<h3>' + ppSessionStarBtn(id) + ' ' + esc(s.title) + '</h3>' +
-    '<div class="meta"><b>' + esc(s.label) + '</b> · ' + esc(s.division) + ' · ' + s.items.length +
-    ' presentation' + (s.items.length === 1 ? '' : 's') +
-    (s.outside.length ? ' · also from ' + esc(s.outside.join(', ')) : '') + extra + '</div>' +
+    '<h3>' + ppSessionStarBtn(id) + ' ' + (member ? s.title : esc(s.title)) + '</h3>' +
+    '<div class="meta">' + meta + extra + '</div>' +
     (s.keywords.length ? '<div class="kw">' + esc(s.keywords.join(' · ')) + '</div>' : '') +
     '</header><div class="body"><ol>' + rows + '</ol></div>';
   panel.querySelector('.pclose').addEventListener('click', function () {
@@ -1112,6 +1149,7 @@ sxRefresh();
 
 // --- Remembered filters ----------------------------------------------------
 var PPF_KEY = 'sicb-filters-2027-talks';
+var PPF_SESSION = false;
 var PPF_SEL = 'input[type=checkbox][data-div],input[type=checkbox][data-day]';
 
 function ppfKey(cb) {
@@ -1120,19 +1158,28 @@ function ppfKey(cb) {
   return '';
 }
 
+// Where the filters are kept: across visits on the committee site, for the visit alone on the member
+// site, whose readers should find everything selected when they come back to a page.
+var PPF_STORE = (function () {
+  try {
+    if (PPF_SESSION) { localStorage.removeItem(PPF_KEY); return sessionStorage; }
+    return localStorage;
+  } catch (e) { return null; }
+})();
+
 function ppfSave() {
   var state = {};
   document.querySelectorAll(PPF_SEL).forEach(function (cb) {
     var k = ppfKey(cb);
     if (k) state[k] = cb.checked;
   });
-  try { localStorage.setItem(PPF_KEY, JSON.stringify(state)); } catch (e) { /* private mode */ }
+  try { PPF_STORE.setItem(PPF_KEY, JSON.stringify(state)); } catch (e) { /* private mode */ }
 }
 
 // Returns whether anything moved, so a first visit costs nothing.
 function ppfRestore() {
   var raw = null;
-  try { raw = localStorage.getItem(PPF_KEY); } catch (e) { return false; }
+  try { raw = PPF_STORE.getItem(PPF_KEY); } catch (e) { return false; }
   if (!raw) return false;
   var state;
   try { state = JSON.parse(raw); } catch (e) { return false; }
@@ -1172,6 +1219,7 @@ window.addEventListener('pageshow', function (e) {
 window.PP_PAYLOADS = PAYLOADS;
 window.PP_SESSIONS = JSON.parse(document.getElementById('session-index').textContent);
 var PP_MYPROG = false;
+var PP_PAST = false;
 
 // --- Personal program ------------------------------------------------------
 var PP_YEAR = '2027';
@@ -1407,6 +1455,20 @@ function ppProgramItems() {
     if (key.indexOf('S:') === 0) {
       var id = key.slice(2);
       var s = known[key];
+      // A starred session is listed as its presentations, each as though starred on its own (per the
+      // PO, 2026-10-07), at its own time where it has one and the session's otherwise. `from` keeps the
+      // session's key, which is what removing one of them has to unpick. Only a session with nothing to
+      // list, a meeting or a workshop, stands as one entry.
+      if (s && s.items && s.items.length) {
+        s.items.forEach(function (p) {
+          if (!p.ab) return;
+          items.push({ type: 'talk', key: String(p.ab), ab: String(p.ab), from: key, t: p.t || '',
+            who: p.who || '', aff: p.aff || '', iso: s.iso || '', day: s.day || '',
+            start: p.start || s.start || '', end: p.end || (p.start ? '' : s.end || ''),
+            room: s.room || '', label: '', div: s.div || '', kind: s.kind || '', order: p.order || 0 });
+        });
+        return;
+      }
       items.push(s
         ? { type: 'session', key: key, id: id, t: ppNoDiv(s.t), who: '', iso: s.iso || '', day: s.day || '',
             start: s.start || '', end: s.end || '', room: s.room || '', label: '', div: s.div || '',
@@ -1428,12 +1490,11 @@ function ppProgramItems() {
         order: 0 });
     }
   });
-  // A talk starred on its own and inside a starred session is listed once, inside the session.
-  var inSession = {};
-  items.forEach(function (e) {
-    if (e.type === 'session') (e.items || []).forEach(function (p) { if (p.ab) inSession[p.ab] = 1; });
-  });
-  items = items.filter(function (e) { return e.type === 'session' || !inSession[e.ab]; });
+  // A talk starred on its own and inside a starred session is listed once, as the one starred on its
+  // own, so removing it is the plain case.
+  var byKey = {};
+  items.forEach(function (e) { if (!byKey[e.key] || (byKey[e.key].from && !e.from)) byKey[e.key] = e; });
+  items = items.filter(function (e) { return byKey[e.key] === e; });
   items.sort(function (a, b) {
     var ai = a.iso || '9999-99-99', bi = b.iso || '9999-99-99';
     if (ai !== bi) return ai < bi ? -1 : 1;
@@ -1476,9 +1537,34 @@ function ppPaint(root) {
     b.title = (on ? 'Remove' + noun + ' from my program' : 'Add' + noun + ' to my program');
     b.setAttribute('aria-label', b.title);
   });
+  // Every pane and the itinerary are painted through here once drawn, so what has passed greys too.
+  ppPastTick(root);
 }
+
+// --- What has already happened -----------------------------------------------
+// On the member site (PP_PAST, per the PO, 2026-10-07) anything whose `data-until` has gone is greyed:
+// a block on the grid, a session card, a talk in a pane, a row of the itinerary. The time is floating,
+// "2027-01-04T09:30", and is read on the reader's own clock, which at the meeting is the meeting's,
+// the same convention the calendar export keeps. Checked again every minute.
+function ppUntilAttr(iso, end) {
+  return (iso && end) ? ' data-until="' + ppEsc(iso + 'T' + end) + '"' : '';
+}
+function ppSpanEnd(span) { return (String(span || '').split('\u2013')[1] || '').trim(); }
+function ppUntil(s) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{1,2}):(\d{2})/.exec(String(s || ''));
+  return m ? new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]).getTime() : NaN;
+}
+function ppPastTick(root) {
+  if (!PP_PAST) return;
+  var now = Date.now();
+  (root || document).querySelectorAll('[data-until]').forEach(function (el) {
+    var t = ppUntil(el.dataset.until);
+    el.classList.toggle('past', !isNaN(t) && t <= now);
+  });
+}
+// What My program lists, which is more than the stars once a starred session is listed as its talks.
 function ppCount() {
-  var n = PP_STARS.size;
+  var n = (PP_MYPROG && PP_STARS.size) ? ppProgramItems().length : PP_STARS.size;
   document.querySelectorAll('[data-role=ppcount]').forEach(function (el) { el.textContent = n; });
 }
 // One delegated handler, so a star inserted into a panel after load still works. A star carries a
@@ -1621,6 +1707,27 @@ function ppAuthorLine(e) {
   return authors;
 }
 
+// The talks in a program that run at the same time as another of its talks (per the PO, 2026-10-07),
+// keyed by entry. A talk with no end of its own is taken as the moment it starts. Posters are left out:
+// a poster is up for its whole session and can be read either side of a talk.
+function ppMinutes(t) { var p = String(t || '').split(':'); return (+p[0]) * 60 + (+p[1] || 0); }
+function ppClashes(items) {
+  var talks = items.filter(function (e) {
+    return e.type === 'talk' && e.iso && e.start && !/poster/i.test(String(e.kind || ''));
+  });
+  var out = {};
+  talks.forEach(function (a, i) {
+    var a0 = ppMinutes(a.start), a1 = a.end ? ppMinutes(a.end) : a0;
+    talks.slice(i + 1).forEach(function (b) {
+      if (a.iso !== b.iso) return;
+      var b0 = ppMinutes(b.start), b1 = b.end ? ppMinutes(b.end) : b0;
+      var overlap = (a0 < b1 && b0 < a1) || a0 === b0;
+      if (overlap) { out[a.key] = 1; out[b.key] = 1; }
+    });
+  });
+  return out;
+}
+
 function ppRenderItinerary() {
   var box = document.getElementById('ppitin');
   if (!box) return;
@@ -1633,6 +1740,7 @@ function ppRenderItinerary() {
     return;
   }
 
+  var clash = ppClashes(items);
   var html = '', day = null;
   items.forEach(function (e) {
     var label = e.day || 'Not yet scheduled';
@@ -1649,10 +1757,14 @@ function ppRenderItinerary() {
     var isSession = e.type === 'session';
     var abx = (!isSession && PP_ABSTRACTS[e.ab]) ? ' ppabx' : '';
     var abattr = (!isSession && e.ab) ? ' data-ab="' + ppEsc(e.ab) + '"' : '';
-    var tag = isSession ? 'Whole session' : ppKindTag(e.kind);
+    // A starred session with talks is listed as its talks, so a row that is still a session is a meeting,
+    // a workshop or a social: no "Whole session" tag (per the PO, 2026-10-07), just what kind it is.
+    var tag = isSession ? '' : ppKindTag(e.kind);
     var meta = [];
     if (isSession && e.count) {
       meta.push(e.count + (e.count === 1 ? ' talk' : ' talks') + (e.kind ? ' \u00b7 ' + ppText(e.kind) : ''));
+    } else if (isSession && e.kind) {
+      meta.push(ppEsc(ppText(e.kind)));
     }
     // Who is presenting and where they are from, and nothing else. No division, and no session title
     // either: this is a reader's own programme for the days they are at the meeting, and the day, the
@@ -1669,14 +1781,17 @@ function ppRenderItinerary() {
       var when = (p.start && p.start !== e.start)
         ? '<span class="ppsubw">' + ppEsc(pp12(p.start)) + '</span>' : '';
       var who = [p.who, p.aff].filter(Boolean).map(ppEsc).join(' \u00b7 ');
-      return '<li>' + when + '<span class="ppsubt' + pabx + '"' +
+      return '<li' + ppUntilAttr(e.iso, p.end) + '>' + when + '<span class="ppsubt' + pabx + '"' +
         (p.ab ? ' data-ab="' + ppEsc(p.ab) + '"' : '') + '>' + p.t + '</span>' +
         (who ? '<span class="ppsubm">' + who + '</span>' : '') + '</li>';
     }).join('') + '</ol>' : '';
-    html += '<div class="ppitem' + (isSession ? ' ppsessrow' : '') + '">' +
+    var clashTag = clash[e.key] ? '<span class="pptag ppclashtag">Same time</span>' : '';
+    html += '<div class="ppitem' + (isSession ? ' ppsessrow' : '') + (clash[e.key] ? ' ppclash' : '') + '"' +
+      ppUntilAttr(e.iso, e.end || e.start) + '>' +
       '<div class="ppwhen">' + whenHtml +
         (e.room ? '<span class="pproom">' + ppEsc(e.room) + '</span>' : '') + '</div>' +
       '<div><div class="pptitle' + abx + '"' + abattr + '>' +
+        clashTag +
         (tag ? '<span class="pptag' + (isSession ? ' ppsesstag' : '') + '">' + ppEsc(tag) + '</span>' : '') +
         e.t + '</div>' +
         (meta.length ? '<div class="pptmeta">' + meta.join(' \u00b7 ') + '</div>' : '') +
@@ -1687,11 +1802,26 @@ function ppRenderItinerary() {
   box.innerHTML = html;
   ppPaint(box);
 }
+// Take entries out of the program. One that came from a starred session turns the rest of that session
+// into talks starred on their own, so taking one talk out of a session leaves its others where they were.
+function ppDrop(entries) {
+  var gone = {};
+  entries.forEach(function (e) { gone[e.key] = 1; });
+  var all = ppProgramItems();
+  entries.forEach(function (e) {
+    if (e.from && PP_STARS.has(e.from)) {
+      PP_STARS.delete(e.from);
+      all.forEach(function (o) { if (o.from === e.from && !gone[o.key]) PP_STARS.add(o.key); });
+    }
+    PP_STARS.delete(e.key);
+  });
+}
 // Remove links in the itinerary share the star store, keyed the same way a star is.
 document.addEventListener('click', function (e) {
   var b = e.target.closest ? e.target.closest('.pprm') : null;
   if (!b) return;
-  PP_STARS.delete(b.dataset.key);
+  var entry = ppProgramItems().filter(function (x) { return x.key === b.dataset.key; })[0];
+  if (entry) ppDrop([entry]); else PP_STARS.delete(b.dataset.key);
   ppSave(); ppPaint(); ppCount(); ppRenderItinerary();
 });
 
@@ -1699,8 +1829,14 @@ document.addEventListener('click', function (e) {
 function ppSetView(v) {
   var personal = v === 'personal';
   document.body.classList.toggle('pp-personal', personal);
-  document.querySelectorAll('.ppprint, .ppprint2, .ppics, .ppxlsx, .ppcsv, .ppexport, .ppimport, .ppclear')
+  document.querySelectorAll('.ppmenu, .ppprint, .ppprint2, .ppics, .ppxlsx, .ppcsv, .ppexport, .ppimport, .ppclear')
     .forEach(function (b) { b.hidden = !personal; });
+  // The phone's export row starts folded each time the personal view opens, and a compact print chosen
+  // earlier no longer applies.
+  document.body.classList.remove('pp-more', 'pp-compact');
+  document.querySelectorAll('.ppmenu').forEach(function (b) { b.setAttribute('aria-expanded', 'false'); });
+  // Clearing what has passed only means something where what has passed is greyed.
+  document.querySelectorAll('.ppclearpast').forEach(function (b) { b.hidden = !personal || !PP_PAST; });
   if (personal) {
     if (typeof closeDetail === 'function') closeDetail();
     else if (typeof closeAll === 'function') closeAll();
@@ -1721,12 +1857,14 @@ document.querySelectorAll('input[name=ppview]').forEach(function (r) {
 
 // --- Exports ---------------------------------------------------------------
 // Both PDFs are the browser's print of the itinerary, which is what lays them out; the compact one sets
-// pp-compact on the body for the print stylesheet, and the class comes off once printing is done.
+// pp-compact on the body for the print stylesheet. The class stays on until the next print chooses
+// again, or the reader leaves My program: it used to come off at `afterprint`, and Safari fires that
+// as soon as its print sheet opens, before the page is laid out for paper, so the compact PDF printed
+// at full size there (reported by the PO, 2026-10-07). On screen the class changes nothing.
 function ppPrint(compact) {
   document.body.classList.toggle('pp-compact', !!compact);
   window.print();
 }
-window.addEventListener('afterprint', function () { document.body.classList.remove('pp-compact'); });
 var ppPrintBtn = document.querySelector('.ppprint');
 if (ppPrintBtn) ppPrintBtn.addEventListener('click', function () { ppPrint(false); });
 var ppPrint2Btn = document.querySelector('.ppprint2');
@@ -2061,6 +2199,33 @@ function ppXlsx() {
 var ppXlsxBtn = document.querySelector('.ppxlsx');
 if (ppXlsxBtn) ppXlsxBtn.addEventListener('click', ppXlsx);
 
+// The phone's Export button opens and folds the row of exports and the import.
+document.querySelectorAll('.ppmenu').forEach(function (b) {
+  b.addEventListener('click', function () {
+    var on = document.body.classList.toggle('pp-more');
+    b.setAttribute('aria-expanded', on ? 'true' : 'false');
+  });
+});
+
+// Clear what has already happened (per the PO, 2026-10-07): every entry whose end, or start when it
+// has no end, has gone by the reader's clock, the same test that greys it. A talk that came from a
+// starred session leaves that session's later talks in the program (`ppDrop`). Behind a confirm, like
+// clearing the whole program.
+var ppClearPastBtn = document.querySelector('.ppclearpast');
+if (ppClearPastBtn) ppClearPastBtn.addEventListener('click', function () {
+  var now = Date.now();
+  var done = ppProgramItems().filter(function (e) {
+    var at = e.end || e.start;
+    var t = (e.iso && at) ? ppUntil(e.iso + 'T' + at) : NaN;
+    return !isNaN(t) && t <= now;
+  });
+  if (!done.length) { alert('Nothing in your program has happened yet.'); return; }
+  if (!window.confirm('Remove the ' + done.length + ' item' + (done.length === 1 ? '' : 's') +
+    ' that ' + (done.length === 1 ? 'has' : 'have') + ' already happened from your program?')) return;
+  ppDrop(done);
+  ppSave(); ppPaint(); ppCount(); ppRenderItinerary();
+});
+
 // Clear the whole program, behind a confirm so a mis-click cannot wipe a built-up list.
 var ppClearBtn = document.querySelector('.ppclear');
 if (ppClearBtn) ppClearBtn.addEventListener('click', function () {
@@ -2122,6 +2287,9 @@ ppCount();
 // else from the next time they load the grid, which is what makes the store fill itself in. Skipped on
 // a site with no My-program layer, which has nothing to place.
 if (PP_MYPROG) ppRemember();
+
+// Grey what has already happened, and keep doing so while the page stays open.
+if (PP_PAST) { ppPastTick(); setInterval(function () { ppPastTick(); }, 60000); }
 
 // Arriving at #myprogram (the hub's My-program card links here) opens straight into the personal view.
 if (PP_MYPROG && window.location.hash === '#myprogram') {
