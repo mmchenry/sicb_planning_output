@@ -845,7 +845,7 @@ function fill(panel, id, sim) {
     var when = (member && p.s) ? ' ' + pp12(p.s) : '';
     return '<li' + hitAttr(id, i) + ppUntilAttr(s.iso, p.e || ppSpanEnd(s.span)) + '><div class="ps">' +
       (p.n ? p.n + '.' : '') + when + ' ' + ppStarBtn(p.ab) + '</div>' +
-      '<div class="pt' + abx + '"' + abattr + '>' + (p.ab ? esc(p.ab) + ': ' : '') + p.t + '</div>' +
+      '<div class="pt' + abx + '"' + abattr + '>' + (p.ab ? esc(p.pid || p.ab) + ': ' : '') + p.t + '</div>' +
       (who ? '<div class="pw">' + esc(who) + '</div>' : '') +
       (authors ? '<div class="ppau">' + esc(authors) + '</div>' : '') + '</li>';
   }).join('');
@@ -943,12 +943,14 @@ function sessionMatches(el) {
   });
 }
 
-// A presentation matches when every term is either found in its text or is its abstract id exactly.
+// A presentation matches when every term is either found in its text or is its abstract id exactly, or
+// its poster number (the member site's posters, "p1-026").
 function itemMatches(p) {
   var text = itemText(p);
   var ab = String(p.ab == null ? '' : p.ab).toLowerCase();
+  var pid = String(p.pid == null ? '' : p.pid).toLowerCase();
   return SEARCH.terms.every(function (t) {
-    return text.indexOf(t) !== -1 || (ab && t === ab);
+    return text.indexOf(t) !== -1 || (ab && t === ab) || (pid && t === pid);
   });
 }
 
@@ -1109,11 +1111,13 @@ function findById() {
   Object.keys(SESSIONS).some(function (sid) {
     var items = SESSIONS[sid].items || [];
     for (var i = 0; i < items.length; i++) {
-      if (String(items[i].ab) === v) { foundSid = sid; idx = i; return true; }
+      if (String(items[i].ab) === v || String(items[i].pid || '').toLowerCase() === v.toLowerCase()) {
+        foundSid = sid; idx = i; return true;
+      }
     }
     return false;
   });
-  if (!foundSid) { if (idmsg) idmsg.textContent = 'no talk ' + v + ' in this view'; return; }
+  if (!foundSid) { if (idmsg) idmsg.textContent = 'nothing numbered ' + v + ' in this view'; return; }
   if (typeof clearReference === 'function') clearReference();
   if (qbox) qbox.value = '';
   if (typeof sxRefresh === 'function') sxRefresh();
